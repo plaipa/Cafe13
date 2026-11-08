@@ -18,7 +18,7 @@
   --fa: "Vazirmatn", system-ui, sans-serif;
   --serif: "Instrument Serif", Georgia, serif;
   --top: 60px;
-  --tabs: 104px;
+  --tabs: 114px;
   --pad: 20px;
   --ease: cubic-bezier(.22, 1, .36, 1);
   --safe-b: env(safe-area-inset-bottom, 0px);
@@ -102,11 +102,10 @@ html:not(.is-loading) .loader { display: none; }
 .hero__disc {
   /* sized by the screen height so it always ends above the words */
   --d: max(200px, min(108vw, calc(100svh - 456px - var(--notice, 0px))));
-  position: absolute; z-index: 31; width: var(--d); aspect-ratio: 1;
+  position: absolute; width: var(--d); aspect-ratio: 1;
   top: calc(var(--top) - .08 * var(--d)); inset-inline-start: calc(-.3 * var(--d));
-  pointer-events: none;
+  will-change: transform;
 }
-.hero__disc img { will-change: transform; }
 [dir="ltr"] .hero__disc { inset-inline-start: auto; inset-inline-end: calc(-.3 * var(--d)); }
 .hero__disc img { width: 100%; height: 100%; }
 .hero__inner { position: relative; width: 100%; max-width: 1180px; margin-inline: auto; }
@@ -166,7 +165,7 @@ html:not(.is-loading) .loader { display: none; }
   background: var(--red); transition: transform .6s var(--ease);
 }
 .tabs__chips {
-  display: flex; gap: 8px; overflow-x: auto; padding: 0 var(--pad) 12px;
+  display: flex; gap: 8px; overflow-x: auto; padding: 10px var(--pad) 12px;
   scrollbar-width: none; max-width: 1180px; margin-inline: auto;
   overscroll-behavior-x: contain;
 }
@@ -180,12 +179,13 @@ html:not(.is-loading) .loader { display: none; }
 .chip[hidden] { display: none; }
 
 /* ---------- Menu sections ---------- */
-.sec { position: relative; padding: 64px 0 72px; overflow: hidden; }
+.sec { position: relative; padding: 52px 0 64px; overflow: hidden; }
 .sec--cafe { background: var(--black); color: var(--paper); --line: #2e2e2e; --muted: var(--g400); --price-bg: transparent; --price: var(--yellow); --accent: var(--yellow); }
 .sec--burger { background: var(--red); color: var(--black); --line: rgba(17,17,17,.28); --muted: #1E0805; --price-bg: var(--black); --price: var(--yellow); --accent: var(--black); }
 .sec--breakfast { background: var(--g100); color: var(--black); --line: #CBCBC7; --muted: #4F4F4F; --price-bg: transparent; --price: var(--black); --accent: var(--red); }
 
-.sec__head { position: relative; margin-bottom: 36px; }
+/* The first group already has 28px of its own above it, so the head adds only a little: ~36px from the note to the first group */
+.sec__head { position: relative; margin-bottom: 8px; }
 .sec__word {
   display: block; font-family: var(--serif); font-weight: 400; font-size: clamp(76px, 26vw, 260px);
   line-height: .82; letter-spacing: -.04em; direction: ltr; text-align: start; white-space: nowrap;
@@ -194,9 +194,9 @@ html:not(.is-loading) .loader { display: none; }
 [dir="rtl"] .sec__word { text-align: right; }
 .sec__word .ch { display: inline-block; will-change: transform; }
 .sec--cafe .sec__word { color: var(--red); }
-.sec__title { margin: 14px 0 0; font-size: 34px; font-weight: 900; line-height: 1.2; }
+.sec__title { margin: 18px 0 0; font-size: 34px; font-weight: 900; line-height: 1.2; }
 [dir="ltr"] .sec__title { font-weight: 800; }
-.sec__count { margin: 4px 0 0; font-size: 14px; color: var(--muted); }
+.sec__count { margin: 6px 0 0; font-size: 14px; color: var(--muted); }
 
 .group { padding-top: 28px; scroll-margin-top: calc(var(--top) + var(--tabs) + 8px); }
 .group__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 10px; position: relative; }
