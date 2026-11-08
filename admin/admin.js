@@ -151,6 +151,8 @@
   function normalize() {
     data.settings = data.settings || {};
     ['name', 'city', 'address', 'hours', 'priceUnit', 'notice'].forEach(k => { data.settings[k] = { fa: '', en: '', ...(data.settings[k] || {}) }; });
+    const st = data.settings.story = data.settings.story || {};
+    ['since', 'title', 'text'].forEach(k => { st[k] = { fa: '', en: '', ...(st[k] || {}) }; });
     ['phone', 'instagram'].forEach(k => { if (data.settings[k] == null) data.settings[k] = ''; });
     data.sections = data.sections || [];
     data.sections.forEach(s => {
@@ -296,6 +298,20 @@
         </div>
         ${pair('priceUnit', 'واحد قیمت')}
         ${pair('notice', 'اطلاعیه بالای سایت (خالی = بدون اطلاعیه)')}
+      </section>
+      <section class="card settings" data-settings>
+        <h2>دربارهٔ ما (متن افتتاحیه)</h2>
+        <p class="muted">اگر «متن» را خالی بگذارید، این بخش در سایت نمایش داده نمی‌شود.</p>
+        <div class="field-row">
+          <label class="field"><span>برچسب تاریخ (فارسی)</span><input data-f="story.since.fa" value="${esc(S.story.since.fa)}"></label>
+          <label class="field"><span>برچسب تاریخ (انگلیسی)</span><input data-f="story.since.en" dir="ltr" value="${esc(S.story.since.en)}"></label>
+        </div>
+        <div class="field-row">
+          <label class="field"><span>عنوان (فارسی)</span><input data-f="story.title.fa" value="${esc(S.story.title.fa)}"></label>
+          <label class="field"><span>عنوان (انگلیسی)</span><input data-f="story.title.en" dir="ltr" value="${esc(S.story.title.en)}"></label>
+        </div>
+        <label class="field"><span>متن (فارسی)</span><textarea data-f="story.text.fa" rows="6">${esc(S.story.text.fa)}</textarea></label>
+        <label class="field"><span>متن (انگلیسی)</span><textarea data-f="story.text.en" dir="ltr" rows="6">${esc(S.story.text.en)}</textarea></label>
       </section>`;
   }
 

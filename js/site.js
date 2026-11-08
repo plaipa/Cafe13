@@ -48,8 +48,10 @@
   if (!animate) { root.classList.remove('is-loading'); root.classList.add('no-motion'); }
 
   /* ---------- Render ---------- */
+  let unit = '';
   function render(data) {
     const S = data.settings || {};
+    unit = tx(S.priceUnit);
     const fill = {
       name: tx(S.name), city: tx(S.city), hours: tx(S.hours), address: tx(S.address),
       ...T
@@ -61,6 +63,14 @@
     if (S.phone) {
       const cell = $('.visit__cell--phone'); cell.hidden = false;
       const a = $('[data-phone]'); a.textContent = S.phone; a.href = 'tel:' + S.phone.replace(/[^\d+]/g, '');
+    }
+    const st = S.story || {};
+    const storyText = tx(st.text).trim();
+    if (storyText) {
+      $('[data-t="storySince"]').textContent = tx(st.since);
+      $('[data-t="storyTitle"]').textContent = tx(st.title);
+      $('[data-t="storyText"]').textContent = storyText;
+      $('#story').hidden = false;
     }
     const notice = tx(S.notice).trim();
     if (notice) {
@@ -118,7 +128,7 @@
     const has = !!img;
     const price = it.price == null || it.price === ''
       ? `<span class="item__price is-empty">—</span>`
-      : `<span class="item__price">${num(it.price)}</span>`;
+      : `<span class="item__price">${num(it.price)}${unit ? `<small class="item__unit">${esc(unit)}</small>` : ''}</span>`;
     const desc = tx(it.desc);
     const tag = has ? 'button' : 'div';
     return `
@@ -141,7 +151,10 @@
     const el = document.getElementById(id);
     if (!el) return;
     const off = -headH() + (id.startsWith('sec-') ? 1 : -4);
-    if (lenis) lenis.scrollTo(el, { offset: off, duration: 1.4 });
+    if (lenis) {
+      const dist = Math.abs(el.getBoundingClientRect().top + off);
+      lenis.scrollTo(el, { offset: off, duration: Math.min(2, Math.max(.8, dist / 2600)) });
+    }
     else window.scrollTo({ top: el.getBoundingClientRect().top + scrollY + off, behavior: reduce ? 'auto' : 'smooth' });
   }
 
@@ -168,16 +181,22 @@
     if (ink && i >= 0) ink.style.transform = `translateX(${(RTL ? -100 : 100) * i}%)`;
     chips().forEach(c => c.hidden = c.dataset.sec !== id);
   }
+  let chipTimer = 0;
   function setGroup(id) {
+    let cur = null;
     chips().forEach(c => {
       const on = c.dataset.go === id;
       c.setAttribute('aria-current', on ? 'true' : 'false');
-      if (on) {
-        const box = c.parentElement;
-        const target = c.offsetLeft - (box.clientWidth - c.offsetWidth) / 2;
-        box.scrollTo({ left: target, behavior: reduce ? 'auto' : 'smooth' });
-      }
+      if (on) cur = c;
     });
+    if (!cur) return;
+    clearTimeout(chipTimer);            // wait until the scroll settles, then centre the chip once
+    chipTimer = setTimeout(() => {
+      const box = cur.parentElement;
+      if (!box || cur.hidden) return;
+      const target = cur.offsetLeft - (box.clientWidth - cur.offsetWidth) / 2;
+      if (Math.abs(box.scrollLeft - target) > 4) box.scrollTo({ left: target, behavior: reduce ? 'auto' : 'smooth' });
+    }, 140);
   }
   function spy() {
     const secs = $$('.sec'), groups = $$('.group');
@@ -230,6 +249,7 @@
   /* ---------- Motion ---------- */
   function initMotion() {
     gsap.registerPlugin(ScrollTrigger, CustomEase);
+    ScrollTrigger.config({ ignoreMobileResize: true });
     CustomEase.create('line', 'M0,0 C0.602,0.01 -0.024,0.995 1,1');
 
     if (window.Lenis) {
@@ -254,17 +274,17 @@
     });
 
     // Titles rise out of their mask
-    $$('.sec__title .mask__in, .visit__title .mask > span').forEach(el => {
-      gsap.from(el, { yPercent: 115, duration: 1.4, ease: 'power3.out', scrollTrigger: { trigger: el.parentElement, start: 'top 92%', once: true } });
+    $$('.sec__title .mask__in, .visit__title .mask > span, .story__title .mask > span').forEach(el => {
+      gsap.from(el, { yPercent: 115, duration: 1.1, ease: 'power3.out', scrollTrigger: { trigger: el.parentElement, start: 'top 94%', once: true } });
     });
 
     // Group rules draw with the line ease
-    $$('.group__rule').forEach(r => gsap.from(r, { scaleX: 0, duration: 1.5, ease: 'line', scrollTrigger: { trigger: r, start: 'top 94%', once: true } }));
+    $$('.group__rule').forEach(r => gsap.from(r, { scaleX: 0, duration: 1.2, ease: 'line', scrollTrigger: { trigger: r, start: 'top 98%', once: true } }));
 
     // Menu rows rise in batches (and also when scrolling back up after a jump)
-    gsap.set('.item', { autoAlpha: 0, y: 26 });
-    const show = b => gsap.to(b, { autoAlpha: 1, y: 0, duration: .9, ease: 'power3.out', stagger: .055, overwrite: true });
-    ScrollTrigger.batch('.item', { start: 'top 96%', onEnter: show, onEnterBack: show, interval: .08, batchMax: 8 });
+    gsap.set('.item', { autoAlpha: 0, y: 18 });
+    const show = b => gsap.to(b, { autoAlpha: 1, y: 0, duration: .6, ease: 'power2.out', stagger: .04, overwrite: true });
+    ScrollTrigger.batch('.item', { start: 'top bottom+=60', onEnter: show, onEnterBack: show, interval: .06, batchMax: 10 });
 
     // Footer mark draws itself, then fills
     const fp = $('.foot__mark path');
@@ -273,6 +293,10 @@
         .to(fp, { strokeDashoffset: 0, ease: 'none', duration: 1 })
         .to(fp, { fill: '#F5CD6E', duration: .35 }, '>-.1');
     }
+
+    // Story
+    gsap.from('.story__since, .story__text', { y: 24, autoAlpha: 0, duration: 1, ease: 'power3.out', stagger: .12,
+      scrollTrigger: { trigger: '.story', start: 'top 75%', once: true } });
 
     // Visit rows
     gsap.from('.visit__cell, .visit .btn', { y: 24, autoAlpha: 0, duration: 1, ease: 'power3.out', stagger: .08,

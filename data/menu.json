@@ -9,8 +9,8 @@
    "en": "Tabriz"
   },
   "address": {
-   "fa": "تبریز",
-   "en": "Tabriz"
+   "fa": "تبریز، ولیعصر، فروغی، خیابان شیخ محمد خیابانی، کافه ۱۳",
+   "en": "Valiasr, Foroughi, Sheikh Mohammad Khiabani St., Cafe 13, Tabriz"
   },
   "hours": {
    "fa": "هر روز، ۹ صبح تا ۱۲ شب",
@@ -25,6 +25,20 @@
   "notice": {
    "fa": "",
    "en": ""
+  },
+  "story": {
+   "since": {
+    "fa": "از ۵ اسفند ۱۳۹۴",
+    "en": "Since 24 February 2016"
+   },
+   "title": {
+    "fa": "از ۱۳۹۴ تا همین فنجان",
+    "en": "From 2016 to this very cup"
+   },
+   "text": {
+    "fa": "پنجم اسفند ۱۳۹۴ در کافه ۱۳ را در تبریز باز کردیم؛ با یک قهوهٔ خوب، یک برگر که تا آخرین لقمه سرپا بماند و صبحانه‌ای که روزتان را درست شروع کند. بیش از ده سال گذشته و هنوز هر فنجان را مثل روز اول می‌ریزیم. اینجا جایی است برای قرارهای کوتاه، گپ‌های طولانی و یک استراحت وسط روز. هر وقت آمدید، میز شما آماده است.",
+    "en": "We opened the doors of Cafe 13 in Tabriz on 24 February 2016, with one good coffee, a burger that holds up to the last bite, and a breakfast that starts your day right. More than ten years on, we still pour every cup like it's the first. It's a place for quick meetups, long conversations and a break in the middle of the day. Whenever you come, your table is ready."
+   }
   }
  },
  "sections": [
