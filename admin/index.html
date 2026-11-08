@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#111111">
+<title>پنل منو | کافه ۱۳</title>
+<link rel="icon" href="../assets/brand/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/brand/apple-touch-icon.png">
+<link rel="preload" href="../assets/fonts/Vazirmatn-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<header class="bar">
+  <a class="bar__brand" href="../" target="_blank" rel="noopener" title="دیدن سایت">
+    <img src="../assets/brand/logo.svg" alt="" width="34" height="34">
+    <span>پنل منو</span>
+  </a>
+  <div class="bar__end">
+    <span class="bar__mode" id="mode" hidden></span>
+    <button class="bar__btn" id="logout" type="button" hidden>خروج</button>
+  </div>
+</header>
+
+<!-- Sign in -->
+<main class="login" id="login" hidden>
+  <form class="card login__card" id="loginForm" autocomplete="off">
+    <h1>ورود به پنل منو</h1>
+    <p class="muted">تغییرات مستقیم در مخزن گیت‌هاب سایت ذخیره می‌شود و حدود یک دقیقه بعد روی سایت دیده می‌شود.</p>
+
+    <label class="field">
+      <span>توکن گیت‌هاب</span>
+      <input type="password" name="token" required spellcheck="false" autocapitalize="off" dir="ltr" placeholder="github_pat_…">
+    </label>
+    <div class="field-row">
+      <label class="field">
+        <span>مخزن</span>
+        <input name="repo" required dir="ltr" spellcheck="false" autocapitalize="off" value="plaipa/Cafe13">
+      </label>
+      <label class="field field--sm">
+        <span>شاخه</span>
+        <input name="branch" required dir="ltr" spellcheck="false" autocapitalize="off" value="main">
+      </label>
+    </div>
+    <p class="error" id="loginError" hidden></p>
+    <button class="btn btn--primary" type="submit" id="loginBtn">ورود</button>
+    <button class="btn btn--ghost" type="button" id="localBtn">پیش‌نمایش بدون ورود</button>
+
+    <details class="help">
+      <summary>توکن را از کجا بگیرم؟</summary>
+      <ol>
+        <li>در گیت‌هاب وارد حساب صاحب مخزن شوید و به <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">ساخت توکن جدید (Fine-grained)</a> بروید.</li>
+        <li>در «Repository access» فقط مخزن <b dir="ltr">Cafe13</b> را انتخاب کنید.</li>
+        <li>در «Permissions» گزینهٔ <b dir="ltr">Contents</b> را روی <b dir="ltr">Read and write</b> بگذارید.</li>
+        <li>توکن را بسازید، کپی کنید و اینجا وارد کنید. فقط روی همین دستگاه ذخیره می‌شود.</li>
+      </ol>
+    </details>
+  </form>
+</main>
+
+<!-- Editor -->
+<div class="editor" id="editor" hidden>
+  <nav class="stabs" id="stabs"></nav>
+  <div class="tools">
+    <input class="search" id="search" type="search" placeholder="جستجوی آیتم…" autocomplete="off">
+  </div>
+  <main class="panel" id="panel"></main>
+  <div class="savebar">
+    <span class="savebar__state" id="dirty">بدون تغییر</span>
+    <button class="btn btn--primary" type="button" id="save" disabled>ذخیره و انتشار</button>
+  </div>
+</div>
+
+<p class="loading" id="loading">در حال بارگذاری…</p>
+<input type="file" id="file" accept="image/*" hidden>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>کافه ۱۳ تبریز | منوی قهوه، برگر و صبحانه</title>
+<meta name="description" content="منوی کافه ۱۳ در تبریز: قهوه و نوشیدنی، برگر و پیتزای دیترویتی، و صبحانه. Cafe 13 Tabriz menu.">
+<meta name="theme-color" content="#111111">
+<meta property="og:title" content="کافه ۱۳ تبریز">
+<meta property="og:description" content="قهوه، برگر و صبحانه در تبریز">
+<meta property="og:image" content="https://caffe13.ir/assets/brand/logo-1024.png">
+<meta property="og:url" content="https://caffe13.ir/">
+<link rel="canonical" href="https://caffe13.ir/">
+<link rel="icon" href="assets/brand/favicon.ico" sizes="any">
+<link rel="icon" href="assets/brand/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preload" href="assets/fonts/Vazirmatn-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/vendor/lenis.css">
+<link rel="stylesheet" href="css/site.css">
+<script>(function(d){d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('is-loading');setTimeout(function(){d.classList.remove('is-loading')},9000)}})(document.documentElement)</script>
+</head>
+<body>
+
+<!-- Loader: panels, the circle drawn, then the 13 drawn and filled -->
+<div class="loader" aria-hidden="true">
+  <div class="loader__panels"><i></i><i></i><i></i><i></i></div>
+  <svg class="loader__mark" viewBox="0 0 1000 1000">
+    <circle class="loader__circle" cx="500" cy="500" r="480" pathLength="1" />
+    <path class="loader__glyph" pathLength="1" fill-rule="evenodd" d="{{GLYPH}}" />
+  </svg>
+</div>
+
+<header class="top">
+  <a class="top__logo" href="#top" aria-label="Cafe 13"><img src="assets/brand/logo.svg" alt="" width="36" height="36"></a>
+  <div class="top__end">
+    <a class="top__ig" data-ig href="https://www.instagram.com/caffe.13" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" class="dot"/></svg>
+    </a>
+    <a class="top__lang" data-lang-switch href="?lang=en">EN</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="hero__disc" aria-hidden="true"><img src="assets/brand/logo.svg" alt=""></div>
+    <div class="hero__inner">
+      <p class="hero__kicker"><span data-t="city"></span><span class="hero__dot"></span><span data-t="hours"></span></p>
+      <h1 class="hero__title"><span class="mask"><span data-t="name" class="hero__name"></span></span></h1>
+      <p class="hero__lead" data-t="lead"></p>
+      <p class="hero__notice" data-notice hidden></p>
+      <nav class="hero__cats" aria-label="Menu"></nav>
+    </div>
+  </section>
+
+  <div class="menuwrap">
+    <div class="tabs" role="navigation">
+      <div class="tabs__row"></div>
+      <div class="tabs__chips"></div>
+    </div>
+
+    <div class="menu" id="menu"></div>
+  </div>
+
+  <section class="visit" id="visit">
+    <div class="wrap">
+      <h2 class="visit__title"><span class="mask"><span data-t="visitTitle"></span></span></h2>
+      <div class="visit__grid">
+        <div class="visit__cell"><p class="visit__label" data-t="addressLabel"></p><p class="visit__val" data-t="address"></p></div>
+        <div class="visit__cell"><p class="visit__label" data-t="hoursLabel"></p><p class="visit__val" data-t="hours"></p></div>
+        <div class="visit__cell visit__cell--phone" hidden><p class="visit__label" data-t="phoneLabel"></p><p class="visit__val"><a data-phone href="#"></a></p></div>
+      </div>
+      <a class="btn" data-ig href="https://www.instagram.com/caffe.13" target="_blank" rel="noopener">
+        <span class="btn__fill"></span>
+        <span class="btn__txt"><span class="btn__a"><b data-t="igCta"></b> <span class="ltr">@caffe.13</span></span><span class="btn__b" aria-hidden="true"><b data-t="igCta"></b> <span class="ltr">@caffe.13</span></span></span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <svg class="foot__mark" viewBox="0 0 1000 1000" aria-hidden="true"><path pathLength="1" fill-rule="evenodd" d="{{GLYPH}}"/></svg>
+  <div class="foot__row">
+    <p><span data-t="name"></span> · <span data-t="city"></span> · <span class="ltr" data-year></span></p>
+    <p data-t="priceNote"></p>
+  </div>
+</footer>
+
+<div class="sheet" hidden>
+  <div class="sheet__scrim" data-close></div>
+  <div class="sheet__panel" role="dialog" aria-modal="true">
+    <button class="sheet__x" data-close aria-label="Close">×</button>
+    <div class="sheet__img"><img alt=""></div>
+    <div class="sheet__body"></div>
+  </div>
+</div>
+
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/vendor/ScrollTrigger.min.js"></script>
+<script src="assets/vendor/SplitText.min.js"></script>
+<script src="assets/vendor/CustomEase.min.js"></script>
+<script src="assets/vendor/lenis.min.js"></script>
+<script src="js/site.js"></script>
+</body>
+</html>
