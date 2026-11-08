@@ -13,10 +13,10 @@
   const RTL = lang === 'fa';
 
   const T = {
-    fa: { lead: 'قهوه، برگر و صبحانه در تبریز', visitTitle: 'سر بزنید', addressLabel: 'آدرس', hoursLabel: 'ساعت کاری',
+    fa: { lead: 'قهوه، برگر و صبحانه', visitTitle: 'سر بزنید', addressLabel: 'آدرس', hoursLabel: 'ساعت کاری',
           phoneLabel: 'تلفن', igCta: 'اینستاگرام ما', priceNote: 'قیمت‌ها به هزار تومان', items: 'آیتم', out: 'تمام شد',
           error: 'منو بارگذاری نشد. صفحه را دوباره باز کنید.', title: 'کافه ۱۳ تبریز | منوی قهوه، برگر و صبحانه' },
-    en: { lead: 'Coffee, burgers and breakfast in Tabriz', visitTitle: 'Visit us', addressLabel: 'Address', hoursLabel: 'Hours',
+    en: { lead: 'Coffee, burgers and breakfast', visitTitle: 'Visit us', addressLabel: 'Address', hoursLabel: 'Hours',
           phoneLabel: 'Phone', igCta: 'Follow us', priceNote: 'Prices in thousand toman', items: 'items', out: 'Sold out',
           error: 'The menu did not load. Please reload the page.', title: 'Cafe 13 Tabriz | Coffee, burgers and breakfast' }
   }[lang];
@@ -38,6 +38,7 @@
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const tx = o => (o && (o[lang] || o.fa || o.en)) || '';
   const num = n => Number(n).toLocaleString(RTL ? 'fa-IR' : 'en-US');
+  const fmtPrice = n => Number(n).toLocaleString('en-US');   // prices always use Latin digits
   const arrow = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const hasGsap = !!(window.gsap && window.ScrollTrigger);
@@ -128,7 +129,7 @@
     const has = !!img;
     const price = it.price == null || it.price === ''
       ? `<span class="item__price is-empty">—</span>`
-      : `<span class="item__price">${num(it.price)}${unit ? `<small class="item__unit">${esc(unit)}</small>` : ''}</span>`;
+      : `<span class="item__price">${fmtPrice(it.price)}${unit ? `<small class="item__unit">${esc(unit)}</small>` : ''}</span>`;
     const desc = tx(it.desc);
     const tag = has ? 'button' : 'div';
     return `
@@ -227,7 +228,7 @@
     $('.sheet__body', sh).innerHTML = `
       <h3>${esc(tx(it.name))}</h3>${RTL && it.name.en ? `<div class="en">${esc(it.name.en)}</div>` : ''}
       ${tx(it.desc) ? `<p>${esc(tx(it.desc))}</p>` : ''}
-      ${it.price != null && it.price !== '' ? `<div class="price">${num(it.price)} <small>${esc(tx(data.settings.priceUnit))}</small></div>` : ''}`;
+      ${it.price != null && it.price !== '' ? `<div class="price">${fmtPrice(it.price)} <small>${esc(tx(data.settings.priceUnit))}</small></div>` : ''}`;
     sh.hidden = false;
     lenis && lenis.stop();
     if (animate) {

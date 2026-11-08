@@ -220,7 +220,7 @@ html:not(.is-loading) .loader { display: none; }
   font-variant-numeric: tabular-nums; white-space: nowrap;
 }
 .sec--burger .item__price { padding: 2px 10px; border-radius: 4px; }
-.item__unit { font-size: 11px; font-weight: 500; opacity: .75; margin-inline-start: 4px; }
+.item__unit { font-size: 12px; font-weight: 500; opacity: .8; margin-inline-start: 5px; }
 .item__price.is-empty { font-weight: 400; color: var(--muted); background: none; padding: 0; }
 .item.is-out { opacity: .45; }
 .item.is-out .item__price { text-decoration: line-through; }
