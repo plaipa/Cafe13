@@ -248,8 +248,13 @@ html:not(.is-loading) .loader { display: none; }
 .story__year { margin: 8px 0 0; }
 .odo { display: inline-flex; direction: ltr; font-size: clamp(96px, calc((100vw - 2 * var(--pad)) / 2.8), 300px); font-weight: 900; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 [dir="ltr"] .odo { font-family: var(--serif); font-weight: 400; letter-spacing: -.03em; font-size: clamp(110px, calc((100vw - 2 * var(--pad)) / 1.62), 400px); }
-.odo__col { display: block; height: 1.12em; overflow: hidden; }
-.odo__strip { display: flex; flex-direction: column; will-change: transform; }
+/* soft top and bottom edges, so digits slide in and out instead of being cut off */
+.odo__col {
+  display: block; height: 1.12em; overflow: hidden;
+  -webkit-mask-image: linear-gradient(transparent 0, #000 13%, #000 87%, transparent 100%);
+  mask-image: linear-gradient(transparent 0, #000 13%, #000 87%, transparent 100%);
+}
+.odo__strip { display: flex; flex-direction: column; transform: translateY(var(--end, 0)); }
 .odo__strip > span { display: block; height: 1.12em; line-height: 1.12em; text-align: center; }
 /* A timeline from the opening year to today */
 .story__line { display: flex; align-items: center; margin: 4px 0 36px; }
@@ -263,8 +268,7 @@ html:not(.is-loading) .loader { display: none; }
 .story__title { margin: 0 0 22px; font-size: 36px; font-weight: 900; line-height: 1.35; text-wrap: balance; }
 .story__title .mask > span { display: block; }
 [dir="ltr"] .story__title { font-family: var(--serif); font-weight: 400; font-size: 48px; line-height: 1.02; letter-spacing: -.02em; }
-.story__body p { margin: 0 0 16px; font-size: 17px; line-height: 2; color: #2b2b2b; max-width: 34em; }
-.story__body p:first-child { color: var(--black); font-weight: 600; }
+.story__body p { margin: 0 0 16px; font-size: 18px; line-height: 2; color: #222; max-width: 34em; }
 [dir="ltr"] .story__body p { line-height: 1.7; }
 
 .story__stats { display: grid; grid-template-columns: 1fr 1fr; margin: 30px 0 32px; border-top: 3px solid var(--black); }

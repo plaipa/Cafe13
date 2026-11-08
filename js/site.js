@@ -62,28 +62,24 @@
     try { return parseInt(new Intl.DateTimeFormat('en-US-u-ca-persian', { year: 'numeric' }).format(d), 10); }
     catch (e) { return d.getFullYear() - 621; }
   };
+  // Every column from the first changed digit onward spins one full turn and lands on its new digit.
+  // Without motion the strips rest on the final digit through a CSS variable.
   let odo = null;
   function buildOdo(el, from, to) {
-    if (!el || !(to >= from) || String(from).length !== String(to).length) return;
-    const n = String(to).length, cols = [];
+    const a = String(from), b = String(to);
+    if (!el || !(to > from) || a.length !== b.length) return;
+    const first = [...a].findIndex((d, i) => d !== b[i]);
+    const steps = [];
     let html = '';
-    for (let i = 0; i < n; i++) {
-      const p = 10 ** (n - 1 - i), lo = Math.floor(from / p), hi = Math.floor(to / p);
+    for (let i = 0; i < b.length; i++) {
+      const d0 = +a[i], k = i < first ? 0 : (+b[i] - d0 + 10) % 10 + 10;
       let strip = '';
-      for (let v = lo; v <= hi; v++) strip += `<span>${DIGITS[v % 10]}</span>`;
-      html += `<span class="odo__col"><span class="odo__strip">${strip}</span></span>`;
-      cols.push({ p, lo, hi });
+      for (let s = 0; s <= k; s++) strip += `<span>${DIGITS[(d0 + s) % 10]}</span>`;
+      html += `<span class="odo__col"><span class="odo__strip" style="--end:${(-k / (k + 1) * 100).toFixed(4)}%">${strip}</span></span>`;
+      steps.push(k);
     }
     el.innerHTML = `<span class="odo">${html}</span>`;
-    odo = { from, to, cols, strips: $$('.odo__strip', el) };
-    setOdo(to);
-  }
-  // A column turns over only while every column to its right is rolling from 9 to 0, like a real counter
-  function setOdo(v) {
-    odo.cols.forEach((c, i) => {
-      const pos = Math.min(c.hi, Math.max(c.lo, Math.floor(v / c.p) + Math.min(1, Math.max(0, (v % c.p) - (c.p - 1)))));
-      odo.strips[i].style.transform = `translate3d(0, ${-(pos - c.lo) * 100 / (c.hi - c.lo + 1)}%, 0)`;
-    });
+    odo = { first, steps, strips: $$('.odo__strip', el) };
   }
 
   /* ---------- Render ---------- */
@@ -379,19 +375,26 @@
         .to(fp, { fill: '#F5CD6E', duration: .35 }, '>-.1');
     }
 
-    // Story
-    // Story: the year counts up from the opening year, the rule draws, the rest rises in
+    // Story: the year spins from the opening year to this year, the line draws, the rest rises in
     if ($('.story') && !$('.story').hidden) {
       const tl = gsap.timeline({ scrollTrigger: { trigger: '.story', start: 'top 70%', once: true } });
       tl.from('.story__since', { y: 16, autoAlpha: 0, duration: .8, ease: 'power3.out' }, 0);
-      if (odo && odo.to > odo.from) {
-        const o = { v: odo.from };
-        setOdo(odo.from);
-        tl.from('.odo', { yPercent: 30, autoAlpha: 0, duration: .9, ease: 'power3.out' }, .1)
-          .to(o, { v: odo.to, duration: 2.6, ease: 'power2.inOut', onUpdate: () => setOdo(o.v) }, .5)
+      let land = 2.4;
+      if (odo) {
+        tl.from('.odo', { y: 30, autoAlpha: 0, duration: .9, ease: 'power3.out' }, .1);
+        odo.strips.forEach((s, i) => {
+          const k = odo.steps[i];
+          if (!k) return;
+          const j = i - odo.first, dur = 2.3 + j * .3, at = .35 + j * .06;
+          gsap.set(s, { y: 0, yPercent: 0 });
+          // pixel moves while spinning, then a percent rest so it stays right if the text size changes
+          tl.to(s, { y: () => Math.round(-k * s.firstElementChild.getBoundingClientRect().height), duration: dur, ease: 'power3.inOut',
+            onComplete: () => gsap.set(s, { y: 0, yPercent: -k / (k + 1) * 100 }) }, at);
+          land = Math.max(land, at + dur);
+        });
       }
-      tl.from('.story__rule', { scaleX: 0, duration: 2.6, ease: 'power2.inOut' }, .5)
-        .from('.story__now', { scale: .4, autoAlpha: 0, duration: .6, ease: 'back.out(2)' }, 2.9);
+      tl.from('.story__rule', { scaleX: 0, duration: land - .5, ease: 'power2.inOut' }, .5)
+        .from('.story__now', { scale: .4, autoAlpha: 0, duration: .6, ease: 'back.out(2)' }, land - .1);
       gsap.from('.story__body p, .stat, .story__cta', { y: 24, autoAlpha: 0, duration: 1, ease: 'power3.out', stagger: .1,
         scrollTrigger: { trigger: '.story__body', start: 'top 88%', once: true } });
       $$('.stat').forEach(s => gsap.from($('.stat__num', s), { yPercent: 60, duration: 1.1, ease: 'power3.out',
