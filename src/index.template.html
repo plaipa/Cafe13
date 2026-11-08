@@ -55,10 +55,20 @@
   </section>
 
   <section class="story" id="story" hidden>
-    <div class="wrap">
+    <div class="wrap story__wrap">
       <p class="story__since"><span data-t="storySince"></span></p>
+      <div class="story__year" data-odo aria-hidden="true"></div>
+      <div class="story__line" aria-hidden="true"><span class="story__rule"></span><span class="story__now" data-t="storyNow"></span></div>
       <h2 class="story__title"><span class="mask"><span data-t="storyTitle"></span></span></h2>
-      <p class="story__text" data-t="storyText"></p>
+      <div class="story__body" data-story-body></div>
+      <div class="story__stats">
+        <div class="stat"><p class="stat__num" data-stat-years></p><p class="stat__lbl" data-t="statYears"></p></div>
+        <div class="stat"><p class="stat__num" data-stat-items></p><p class="stat__lbl" data-t="statItems"></p></div>
+      </div>
+      <a class="btn btn--dark story__cta" href="{{BASE}}menu/">
+        <span class="btn__fill"></span>
+        <span class="btn__txt"><span class="btn__a"><b data-t="storyCta"></b></span><span class="btn__b" aria-hidden="true"><b data-t="storyCta"></b></span></span>
+      </a>
     </div>
   </section>
 

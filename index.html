@@ -17,7 +17,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preload" href="assets/fonts/Vazirmatn-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/vendor/lenis.css?v=189d8e18">
-<link rel="stylesheet" href="css/site.css?v=77cb220a">
+<link rel="stylesheet" href="css/site.css?v=2c7840fc">
 <script>(function(d){d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('is-loading');setTimeout(function(){d.classList.remove('is-loading')},9000)}})(document.documentElement)</script>
 </head>
 <body>
@@ -55,10 +55,20 @@
   </section>
 
   <section class="story" id="story" hidden>
-    <div class="wrap">
+    <div class="wrap story__wrap">
       <p class="story__since"><span data-t="storySince"></span></p>
+      <div class="story__year" data-odo aria-hidden="true"></div>
+      <div class="story__line" aria-hidden="true"><span class="story__rule"></span><span class="story__now" data-t="storyNow"></span></div>
       <h2 class="story__title"><span class="mask"><span data-t="storyTitle"></span></span></h2>
-      <p class="story__text" data-t="storyText"></p>
+      <div class="story__body" data-story-body></div>
+      <div class="story__stats">
+        <div class="stat"><p class="stat__num" data-stat-years></p><p class="stat__lbl" data-t="statYears"></p></div>
+        <div class="stat"><p class="stat__num" data-stat-items></p><p class="stat__lbl" data-t="statItems"></p></div>
+      </div>
+      <a class="btn btn--dark story__cta" href="menu/">
+        <span class="btn__fill"></span>
+        <span class="btn__txt"><span class="btn__a"><b data-t="storyCta"></b></span><span class="btn__b" aria-hidden="true"><b data-t="storyCta"></b></span></span>
+      </a>
     </div>
   </section>
 
@@ -184,6 +194,6 @@
 <script src="assets/vendor/SplitText.min.js?v=f59793f6"></script>
 <script src="assets/vendor/CustomEase.min.js?v=ae9767ac"></script>
 <script src="assets/vendor/lenis.min.js?v=eb73eeb4"></script>
-<script src="js/site.js?v=0d29bac6"></script>
+<script src="js/site.js?v=f61d3f67"></script>
 </body>
 </html>

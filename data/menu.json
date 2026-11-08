@@ -33,13 +33,14 @@
     "en": "Since 24 February 2016"
    },
    "title": {
-    "fa": "از ۱۳۹۴ تا همین فنجان",
-    "en": "From 2016 to this very cup"
+    "fa": "ده سال، هزاران فنجان، همان میز.",
+    "en": "Ten years. Thousands of cups. Same table."
    },
    "text": {
-    "fa": "پنجم اسفند ۱۳۹۴ در کافه ۱۳ را باز کردیم؛ با یک قهوهٔ خوب، یک برگر که تا آخرین لقمه سرپا بماند و صبحانه‌ای که روزتان را درست شروع کند. بیش از ده سال گذشته و هنوز هر فنجان را مثل روز اول می‌ریزیم. اینجا جایی است برای قرارهای کوتاه، گپ‌های طولانی و یک استراحت وسط روز. هر وقت آمدید، میز شما آماده است.",
-    "en": "We opened the doors of Cafe 13 on 24 February 2016, with one good coffee, a burger that holds up to the last bite, and a breakfast that starts your day right. More than ten years on, we still pour every cup like it's the first. It's a place for quick meetups, long conversations and a break in the middle of the day. Whenever you come, your table is ready."
-   }
+    "fa": "پنجم اسفند ۱۳۹۴ در کافه ۱۳ را باز کردیم. از همان روز اول قرارمان ساده بود: قهوه‌ای که دوباره هوسش کنید، برگری که تا لقمهٔ آخر سرپا بماند و صبحانه‌ای که روز را درست شروع کند.\n\nحالا بعضی‌ها هر روز سر میز همیشگی‌شان می‌نشینند و بعضی‌ها اولین بار است که از در می‌آیند تو. برای هر دو، فنجان را همان‌طور می‌ریزیم که روز اول ریختیم.",
+    "en": "We opened the doors of Cafe 13 on 24 February 2016. The deal was simple from day one: coffee you'll crave again, a burger that holds up to the last bite, and a breakfast that starts the day right.\n\nToday some guests sit at their usual table every day, and some are walking in for the first time. For both, we pour the cup the way we poured it on day one."
+   },
+   "opened": "2016-02-24"
   }
  },
  "sections": [

@@ -19,11 +19,13 @@
     fa: { mapLabel: 'نقشهٔ محل کافه ۱۳', directions: 'مسیریابی', lead: 'قهوه، برگر و صبحانه', visitTitle: 'سر بزنید', addressLabel: 'آدرس', hoursLabel: 'ساعت کاری',
           phoneLabel: 'تلفن', igCta: 'اینستاگرام ما', priceNote: 'قیمت‌ها به هزار تومان', items: 'آیتم', out: 'تمام شد',
           error: 'منو بارگذاری نشد. صفحه را دوباره باز کنید.', title: 'کافه ۱۳ تبریز | قهوه، برگر و صبحانه',
-          menuDocTitle: 'منوی کافه ۱۳ تبریز | قهوه، برگر و صبحانه', navMenu: 'منو', navHome: 'درباره کافه', menuTitle: 'منو', footLink: 'آدرس و نقشه' },
+          menuDocTitle: 'منوی کافه ۱۳ تبریز | قهوه، برگر و صبحانه', navMenu: 'منو', navHome: 'درباره کافه', menuTitle: 'منو', footLink: 'آدرس و نقشه',
+          storyNow: 'تا امروز', statYears: 'سال پشت پیشخوان', statItems: 'آیتم در منو', storyCta: 'منو را ببینید' },
     en: { mapLabel: 'Map showing where Cafe 13 is', directions: 'Get directions', lead: 'Coffee, burgers and breakfast', visitTitle: 'Visit us', addressLabel: 'Address', hoursLabel: 'Hours',
           phoneLabel: 'Phone', igCta: 'Follow us', priceNote: 'Prices in thousand toman', items: 'items', out: 'Sold out',
           error: 'The menu did not load. Please reload the page.', title: 'Cafe 13 Tabriz | Coffee, burgers and breakfast',
-          menuDocTitle: 'Menu | Cafe 13 Tabriz', navMenu: 'Menu', navHome: 'About', menuTitle: 'Menu', footLink: 'Address & map' }
+          menuDocTitle: 'Menu | Cafe 13 Tabriz', navMenu: 'Menu', navHome: 'About', menuTitle: 'Menu', footLink: 'Address & map',
+          storyNow: 'to today', statYears: 'years behind the counter', statItems: 'items on the menu', storyCta: 'See the menu' }
   }[lang];
   const WORD = { cafe: 'Coffee', burger: 'Burger', breakfast: 'Breakfast' };
 
@@ -52,6 +54,37 @@
   let firstVisit = true;
   try { firstVisit = !sessionStorage.getItem('c13-seen'); sessionStorage.setItem('c13-seen', '1'); } catch (e) {}
   if (!animate) { root.classList.remove('is-loading'); root.classList.add('no-motion'); }
+
+  /* ---------- Story year: an odometer that rolls from the opening year to this year ---------- */
+  const DIGITS = RTL ? '۰۱۲۳۴۵۶۷۸۹' : '0123456789';
+  const calYear = d => {     // solar year in Persian, Gregorian in English
+    if (!RTL) return d.getFullYear();
+    try { return parseInt(new Intl.DateTimeFormat('en-US-u-ca-persian', { year: 'numeric' }).format(d), 10); }
+    catch (e) { return d.getFullYear() - 621; }
+  };
+  let odo = null;
+  function buildOdo(el, from, to) {
+    if (!el || !(to >= from) || String(from).length !== String(to).length) return;
+    const n = String(to).length, cols = [];
+    let html = '';
+    for (let i = 0; i < n; i++) {
+      const p = 10 ** (n - 1 - i), lo = Math.floor(from / p), hi = Math.floor(to / p);
+      let strip = '';
+      for (let v = lo; v <= hi; v++) strip += `<span>${DIGITS[v % 10]}</span>`;
+      html += `<span class="odo__col"><span class="odo__strip">${strip}</span></span>`;
+      cols.push({ p, lo, hi });
+    }
+    el.innerHTML = `<span class="odo">${html}</span>`;
+    odo = { from, to, cols, strips: $$('.odo__strip', el) };
+    setOdo(to);
+  }
+  // A column turns over only while every column to its right is rolling from 9 to 0, like a real counter
+  function setOdo(v) {
+    odo.cols.forEach((c, i) => {
+      const pos = Math.min(c.hi, Math.max(c.lo, Math.floor(v / c.p) + Math.min(1, Math.max(0, (v % c.p) - (c.p - 1)))));
+      odo.strips[i].style.transform = `translate3d(0, ${-(pos - c.lo) * 100 / (c.hi - c.lo + 1)}%, 0)`;
+    });
+  }
 
   /* ---------- Render ---------- */
   let unit = '';
@@ -85,7 +118,14 @@
     if (storyText && $('#story')) {
       $('[data-t="storySince"]').textContent = tx(st.since);
       $('[data-t="storyTitle"]').textContent = tx(st.title);
-      $('[data-t="storyText"]').textContent = storyText;
+      $('[data-story-body]').innerHTML = storyText.split(/\n+/).map(p => p.trim()).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join('');
+      const opened = new Date((/^\d{4}-\d\d-\d\d$/.test(st.opened || '') ? st.opened : '2016-02-24') + 'T12:00:00');
+      const now = new Date();
+      let years = now.getFullYear() - opened.getFullYear();
+      if (now < new Date(now.getFullYear(), opened.getMonth(), opened.getDate())) years--;
+      buildOdo($('[data-odo]'), calYear(opened), calYear(now));
+      $('[data-stat-years]').textContent = num(years) + '+';
+      $('[data-stat-items]').textContent = num((data.sections || []).reduce((n, s) => n + s.groups.reduce((m, g) => m + g.items.length, 0), 0));
       $('#story').hidden = false;
     }
     const notice = tx(S.notice).trim();
@@ -340,8 +380,23 @@
     }
 
     // Story
-    if ($('.story') && !$('.story').hidden) gsap.from('.story__since, .story__text', { y: 24, autoAlpha: 0, duration: 1, ease: 'power3.out', stagger: .12,
-      scrollTrigger: { trigger: '.story', start: 'top 75%', once: true } });
+    // Story: the year counts up from the opening year, the rule draws, the rest rises in
+    if ($('.story') && !$('.story').hidden) {
+      const tl = gsap.timeline({ scrollTrigger: { trigger: '.story', start: 'top 70%', once: true } });
+      tl.from('.story__since', { y: 16, autoAlpha: 0, duration: .8, ease: 'power3.out' }, 0);
+      if (odo && odo.to > odo.from) {
+        const o = { v: odo.from };
+        setOdo(odo.from);
+        tl.from('.odo', { yPercent: 30, autoAlpha: 0, duration: .9, ease: 'power3.out' }, .1)
+          .to(o, { v: odo.to, duration: 2.6, ease: 'power2.inOut', onUpdate: () => setOdo(o.v) }, .5)
+      }
+      tl.from('.story__rule', { scaleX: 0, duration: 2.6, ease: 'power2.inOut' }, .5)
+        .from('.story__now', { scale: .4, autoAlpha: 0, duration: .6, ease: 'back.out(2)' }, 2.9);
+      gsap.from('.story__body p, .stat, .story__cta', { y: 24, autoAlpha: 0, duration: 1, ease: 'power3.out', stagger: .1,
+        scrollTrigger: { trigger: '.story__body', start: 'top 88%', once: true } });
+      $$('.stat').forEach(s => gsap.from($('.stat__num', s), { yPercent: 60, duration: 1.1, ease: 'power3.out',
+        scrollTrigger: { trigger: s, start: 'top 92%', once: true } }));
+    }
 
     // Map: streets draw in, names fade up, the pin drops; the map drifts slowly as you scroll
     const map = $('[data-map]');
