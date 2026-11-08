@@ -227,7 +227,6 @@ html:not(.is-loading) .loader { display: none; }
   font-variant-numeric: tabular-nums; white-space: nowrap;
 }
 .sec--burger .item__price { padding: 2px 10px; border-radius: 4px; }
-.item__unit { font-size: 12px; font-weight: 500; opacity: .8; margin-inline-start: 5px; }
 .item__price.is-empty { font-weight: 400; color: var(--muted); background: none; padding: 0; }
 .item.is-out { opacity: .45; }
 .item.is-out .item__price { text-decoration: line-through; }
@@ -246,7 +245,7 @@ html:not(.is-loading) .loader { display: none; }
 
 /* The year: a rolling counter set as large as the column allows */
 .story__year { margin: 8px 0 0; }
-.odo { display: inline-flex; direction: ltr; font-size: clamp(96px, calc((100vw - 2 * var(--pad)) / 2.8), 300px); font-weight: 900; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.odo { display: inline-flex; direction: ltr; font-size: clamp(110px, calc((100vw - 2 * var(--pad)) / 2.27), 360px); font-weight: 900; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 [dir="ltr"] .odo { font-family: var(--serif); font-weight: 400; letter-spacing: -.03em; font-size: clamp(110px, calc((100vw - 2 * var(--pad)) / 1.62), 400px); }
 /* soft top and bottom edges, so digits slide in and out instead of being cut off */
 .odo__col {
@@ -271,7 +270,7 @@ html:not(.is-loading) .loader { display: none; }
 .story__body p { margin: 0 0 16px; font-size: 18px; line-height: 2; color: #222; max-width: 34em; }
 [dir="ltr"] .story__body p { line-height: 1.7; }
 
-.story__stats { display: grid; grid-template-columns: 1fr 1fr; margin: 30px 0 32px; border-top: 3px solid var(--black); }
+.story__stats { display: grid; grid-template-columns: 1fr; margin: 30px 0 32px; border-top: 3px solid var(--black); }
 .stat { padding: 18px 0 4px; overflow: hidden; }
 .stat + .stat { border-inline-start: 1px solid rgba(17, 17, 17, .25); padding-inline-start: 20px; }
 .stat__num { margin: 0; font-size: 54px; font-weight: 900; line-height: 1.1; direction: ltr; text-align: left; }

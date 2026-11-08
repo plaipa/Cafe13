@@ -20,9 +20,39 @@
     photo: '<svg viewBox="0 0 20 20"><rect x="3" y="4.5" width="14" height="11" rx="2"/><circle cx="8" cy="9" r="1.5"/><path d="M17 13l-4-3.5L5 15.5"/></svg>'
   };
 
+  /* ---------- Sign in ----------
+     The panel opens only for the owner's phone number and password. Neither is stored anywhere: PBKDF2
+     turns them into 64 bytes. The first half is checked against AUTH.check; the second half is an AES key
+     that seals the GitHub token on this device (localStorage), so the token is never kept in plain text.
+     To change the password, compute a new salt and check with the same parameters (see README). */
+  const AUTH = { salt: '3a7352ef3364fb3c66b7b4985a24b7ec', iter: 600000, check: '6e6761ec1a5cc0c7a71345e0ce2b63cc49d9d2ca95cf6923351b78d84f6a8eba' };
+  const REPO = 'plaipa/Cafe13';
+  const hexBytes = h => Uint8Array.from(h.match(/../g), b => parseInt(b, 16));
+  const bytesHex = b => Array.from(b, x => x.toString(16).padStart(2, '0')).join('');
+  const b64bytes = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  const normPhone = s => {
+    let p = toEnDigits(s).replace(/\D/g, '');
+    if (p.startsWith('0098')) p = '0' + p.slice(4);
+    else if (p.startsWith('98') && p.length === 12) p = '0' + p.slice(2);
+    else if (p.length === 10 && p[0] === '9') p = '0' + p;
+    return p;
+  };
+
+  async function unlock(phone, pass) {
+    const raw = new TextEncoder().encode(phone + ':' + pass.normalize('NFC'));
+    const base = await crypto.subtle.importKey('raw', raw, 'PBKDF2', false, ['deriveBits']);
+    const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: hexBytes(AUTH.salt), iterations: AUTH.iter }, base, 512));
+    const check = bytesHex(new Uint8Array(await crypto.subtle.digest('SHA-256', bits.slice(0, 32))));
+    if (check !== AUTH.check) return null;
+    return crypto.subtle.importKey('raw', bits.slice(32), 'AES-GCM', false, ['encrypt', 'decrypt']);
+  }
+
   /* ---------- State ---------- */
-  let cfg = {};
-  try { cfg = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+  let cfg = {};                 // { token, repo, branch } for this tab only (sessionStorage)
+  let store = {};               // kept on this device: { repo, branch, iv, ct } = the token sealed with the key
+  let aesKey = null, fails = 0;
+  try { store = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+  try { cfg = JSON.parse(sessionStorage.getItem(KEY)) || {}; } catch (e) {}
   let mode = 'github';          // or 'local' (preview: saving downloads the file)
   let data = null, sha = null, saved = '';
   let active = 0;               // section index, or 'settings'
@@ -36,6 +66,7 @@
 
   const el = {
     login: $('#login'), form: $('#loginForm'), loginError: $('#loginError'), loginBtn: $('#loginBtn'), localBtn: $('#localBtn'),
+    tform: $('#tokenForm'), tokenError: $('#tokenError'), tokenBtn: $('#tokenBtn'),
     editor: $('#editor'), stabs: $('#stabs'), panel: $('#panel'), search: $('#search'), save: $('#save'), dirty: $('#dirty'),
     loading: $('#loading'), toast: $('#toast'), file: $('#file'), logout: $('#logout'), mode: $('#mode')
   };
@@ -87,51 +118,115 @@
   async function start() {
     if (cfg.token && repoOk(cfg.repo) && cfg.branch) {
       try { await loadRemote(); mode = 'github'; return openEditor(); }
-      catch (e) { showLogin(ghError(e)); return; }
+      catch (e) { endSession(); }
     }
     showLogin();
+  }
+
+  function endSession() {
+    cfg = {}; aesKey = null;
+    try { sessionStorage.removeItem(KEY); } catch (e) {}
   }
 
   function showLogin(msg) {
     el.loading.hidden = true; el.editor.hidden = true; el.login.hidden = false;
     el.logout.hidden = true; el.mode.hidden = true;
-    el.form.repo.value = cfg.repo || 'plaipa/Cafe13';
-    el.form.branch.value = cfg.branch || 'main';
+    el.form.hidden = false; el.tform.hidden = true;
     el.loginError.hidden = !msg; el.loginError.textContent = msg || '';
+  }
+
+  // After the password, when this device has no working token yet.
+  function showToken(msg) {
+    el.loading.hidden = true; el.editor.hidden = true; el.login.hidden = false;
+    el.logout.hidden = true; el.mode.hidden = true;
+    el.form.hidden = true; el.tform.hidden = false;
+    el.tform.repo.value = store.repo || REPO;
+    el.tform.branch.value = store.branch || 'main';
+    el.tokenError.hidden = !msg; el.tokenError.textContent = msg || '';
+  }
+
+  async function seal(c) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, aesKey, new TextEncoder().encode(c.token)));
+    store = { repo: c.repo, branch: c.branch, iv: b64enc(iv), ct: b64enc(ct) };
+    try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {}
+  }
+
+  async function unseal() {
+    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64bytes(store.iv) }, aesKey, b64bytes(store.ct));
+    return new TextDecoder().decode(pt);
+  }
+
+  function enter() {
+    try { sessionStorage.setItem(KEY, JSON.stringify(cfg)); } catch (e) {}
+    mode = 'github';
+    openEditor();
   }
 
   el.form.addEventListener('submit', async e => {
     e.preventDefault();
     const f = el.form;
-    const next = { token: f.token.value.trim(), repo: f.repo.value.trim(), branch: f.branch.value.trim() || 'main' };
-    if (!repoOk(next.repo)) return showLogin('نام مخزن باید به شکل owner/name باشد.');
-    cfg = next;
+    if (!window.crypto || !crypto.subtle) return showLogin('این مرورگر از ورود امن پشتیبانی نمی‌کند. صفحه را با https باز کنید.');
     el.loginBtn.disabled = true; el.loginBtn.textContent = 'در حال بررسی…';
+    let wait = 0;
+    try {
+      const key = await unlock(normPhone(f.phone.value), f.password.value);
+      if (!key) {
+        fails++; wait = Math.min(fails, 5) * 1000;
+        f.password.value = '';
+        return showLogin('شماره تلفن یا رمز عبور درست نیست.');
+      }
+      fails = 0; aesKey = key; f.password.value = '';
+      let token = '';
+      if (store.ct) { try { token = await unseal(); } catch (err) {} }
+      else if (store.token) token = store.token;   // saved in plain text by an older version of the panel
+      if (!token) return showToken();
+      cfg = { token, repo: repoOk(store.repo) ? store.repo : REPO, branch: store.branch || 'main' };
+      try { await loadRemote(); }
+      catch (err) { cfg = {}; return showToken(ghError(err) + ' یک توکن تازه وارد کنید.'); }
+      if (!store.ct) await seal(cfg);
+      enter();
+    } catch (err) {
+      showLogin('ورود انجام نشد: ' + err.message);
+    } finally {
+      setTimeout(() => { el.loginBtn.disabled = false; el.loginBtn.textContent = 'ورود'; }, wait);
+    }
+  });
+
+  el.tform.addEventListener('submit', async e => {
+    e.preventDefault();
+    const f = el.tform;
+    if (!aesKey) return showLogin();
+    const next = { token: f.token.value.trim(), repo: f.repo.value.trim(), branch: f.branch.value.trim() || 'main' };
+    if (!repoOk(next.repo)) return showToken('نام مخزن باید به شکل owner/name باشد.');
+    cfg = next;
+    el.tokenBtn.disabled = true; el.tokenBtn.textContent = 'در حال بررسی…';
     try {
       const repo = await gh('');
       if (repo.permissions && repo.permissions.push === false) throw Object.assign(new Error('no push'), { status: 403 });
       await loadRemote();
-      try { localStorage.setItem(KEY, JSON.stringify(cfg)); } catch (err) {}
+      await seal(cfg);
       f.token.value = '';
-      mode = 'github';
-      openEditor();
+      enter();
     } catch (err) {
       cfg = {};
-      showLogin(ghError(err));
+      showToken(ghError(err));
     } finally {
-      el.loginBtn.disabled = false; el.loginBtn.textContent = 'ورود';
+      el.tokenBtn.disabled = false; el.tokenBtn.textContent = 'اتصال و ورود';
     }
   });
 
   el.localBtn.addEventListener('click', async () => {
+    if (!aesKey) return showLogin();
     try { await loadLocal(); mode = 'local'; openEditor(); }
-    catch (e) { showLogin('فایل منو بارگذاری نشد.'); }
+    catch (e) { showToken('فایل منو بارگذاری نشد.'); }
   });
 
+  // Signs out of this tab. The sealed token stays on the device, so next time only the phone and password are asked.
   el.logout.addEventListener('click', () => {
     if (isDirty() && !confirm('تغییرات ذخیره نشده از بین می‌رود. خارج می‌شوید؟')) return;
-    try { localStorage.removeItem(KEY); } catch (e) {}
-    cfg = {}; data = null; sha = null; saved = ''; photos.clear();
+    endSession();
+    data = null; sha = null; saved = ''; photos.clear();
     showLogin();
   });
 

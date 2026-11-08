@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#111111">
-<title>پنل منو | کافه ۱۳</title>
+<title>پنل منو | کافه 13</title>
 <link rel="icon" href="../assets/brand/logo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/brand/apple-touch-icon.png">
 <link rel="preload" href="../assets/fonts/Vazirmatn-var.woff2" as="font" type="font/woff2" crossorigin>
@@ -27,9 +27,25 @@
 
 <!-- Sign in -->
 <main class="login" id="login" hidden>
-  <form class="card login__card" id="loginForm" autocomplete="off">
+  <form class="card login__card" id="loginForm">
     <h1>ورود به پنل منو</h1>
-    <p class="muted">تغییرات مستقیم در مخزن گیت‌هاب سایت ذخیره می‌شود و حدود یک دقیقه بعد روی سایت دیده می‌شود.</p>
+    <p class="muted">با شماره تلفن و رمز عبور مدیر وارد شوید.</p>
+
+    <label class="field">
+      <span>شماره تلفن</span>
+      <input type="tel" name="phone" required inputmode="numeric" autocomplete="username" dir="ltr" placeholder="09xxxxxxxxx">
+    </label>
+    <label class="field">
+      <span>رمز عبور</span>
+      <input type="password" name="password" required autocomplete="current-password" dir="ltr" spellcheck="false" autocapitalize="off">
+    </label>
+    <p class="error" id="loginError" hidden></p>
+    <button class="btn btn--primary" type="submit" id="loginBtn">ورود</button>
+  </form>
+
+  <form class="card login__card" id="tokenForm" autocomplete="off" hidden>
+    <h1>اتصال به گیت‌هاب</h1>
+    <p class="muted">فقط یک بار روی هر دستگاه لازم است. توکن با رمز عبور شما رمزگذاری و روی همین دستگاه نگه داشته می‌شود؛ از این به بعد ورود فقط با شماره و رمز است.</p>
 
     <label class="field">
       <span>توکن گیت‌هاب</span>
@@ -45,9 +61,9 @@
         <input name="branch" required dir="ltr" spellcheck="false" autocapitalize="off" value="main">
       </label>
     </div>
-    <p class="error" id="loginError" hidden></p>
-    <button class="btn btn--primary" type="submit" id="loginBtn">ورود</button>
-    <button class="btn btn--ghost" type="button" id="localBtn">پیش‌نمایش بدون ورود</button>
+    <p class="error" id="tokenError" hidden></p>
+    <button class="btn btn--primary" type="submit" id="tokenBtn">اتصال و ورود</button>
+    <button class="btn btn--ghost" type="button" id="localBtn">پیش‌نمایش بدون توکن</button>
 
     <details class="help">
       <summary>توکن را از کجا بگیرم؟</summary>
@@ -55,7 +71,7 @@
         <li>در گیت‌هاب وارد حساب صاحب مخزن شوید و به <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">ساخت توکن جدید (Fine-grained)</a> بروید.</li>
         <li>در «Repository access» فقط مخزن <b dir="ltr">Cafe13</b> را انتخاب کنید.</li>
         <li>در «Permissions» گزینهٔ <b dir="ltr">Contents</b> را روی <b dir="ltr">Read and write</b> بگذارید.</li>
-        <li>توکن را بسازید، کپی کنید و اینجا وارد کنید. فقط روی همین دستگاه ذخیره می‌شود.</li>
+        <li>توکن را بسازید، کپی کنید و اینجا وارد کنید. رمزگذاری‌شده و فقط روی همین دستگاه ذخیره می‌شود.</li>
       </ol>
     </details>
   </form>

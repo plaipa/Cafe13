@@ -16,10 +16,10 @@
   const IS_MENU = PAGE === 'menu';
 
   const T = {
-    fa: { mapLabel: 'نقشهٔ محل کافه ۱۳', directions: 'مسیریابی', lead: 'قهوه، برگر و صبحانه', visitTitle: 'سر بزنید', addressLabel: 'آدرس', hoursLabel: 'ساعت کاری',
+    fa: { mapLabel: 'نقشهٔ محل کافه 13', directions: 'مسیریابی', lead: 'قهوه، برگر و صبحانه', visitTitle: 'سر بزنید', addressLabel: 'آدرس', hoursLabel: 'ساعت کاری',
           phoneLabel: 'تلفن', igCta: 'اینستاگرام ما', priceNote: 'قیمت‌ها به هزار تومان', items: 'آیتم', out: 'تمام شد',
-          error: 'منو بارگذاری نشد. صفحه را دوباره باز کنید.', title: 'کافه ۱۳ تبریز | قهوه، برگر و صبحانه',
-          menuDocTitle: 'منوی کافه ۱۳ تبریز | قهوه، برگر و صبحانه', navMenu: 'منو', navHome: 'درباره کافه', menuTitle: 'منو', footLink: 'آدرس و نقشه',
+          error: 'منو بارگذاری نشد. صفحه را دوباره باز کنید.', title: 'کافه 13 تبریز | قهوه، برگر و صبحانه',
+          menuDocTitle: 'منوی کافه 13 تبریز | قهوه، برگر و صبحانه', navMenu: 'منو', navHome: 'درباره کافه', menuTitle: 'منو', footLink: 'آدرس و نقشه',
           storyNow: 'تا امروز', statYears: 'سال پشت پیشخوان', statItems: 'آیتم در منو', storyCta: 'منو را ببینید' },
     en: { mapLabel: 'Map showing where Cafe 13 is', directions: 'Get directions', lead: 'Coffee, burgers and breakfast', visitTitle: 'Visit us', addressLabel: 'Address', hoursLabel: 'Hours',
           phoneLabel: 'Phone', igCta: 'Follow us', priceNote: 'Prices in thousand toman', items: 'items', out: 'Sold out',
@@ -43,8 +43,10 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const tx = o => (o && (o[lang] || o.fa || o.en)) || '';
-  const num = n => Number(n).toLocaleString(RTL ? 'fa-IR' : 'en-US');
+  // All numbers use English digits, also in text typed into the admin panel with Persian digits
+  const latin = s => String(s).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/٪/g, '%');
+  const tx = o => latin((o && (o[lang] || o.fa || o.en)) || '');
+  const num = n => Number(n).toLocaleString('en-US');
   const fmtPrice = n => Number(n).toLocaleString('en-US');   // prices always use Latin digits
   const arrow = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -56,7 +58,7 @@
   if (!animate) { root.classList.remove('is-loading'); root.classList.add('no-motion'); }
 
   /* ---------- Story year: an odometer that rolls from the opening year to this year ---------- */
-  const DIGITS = RTL ? '۰۱۲۳۴۵۶۷۸۹' : '0123456789';
+  const DIGITS = '0123456789';
   const calYear = d => {     // solar year in Persian, Gregorian in English
     if (!RTL) return d.getFullYear();
     try { return parseInt(new Intl.DateTimeFormat('en-US-u-ca-persian', { year: 'numeric' }).format(d), 10); }
@@ -83,10 +85,8 @@
   }
 
   /* ---------- Render ---------- */
-  let unit = '';
   function render(data) {
     const S = data.settings || {};
-    unit = tx(S.priceUnit);
     const fill = {
       name: tx(S.name), city: tx(S.city), hours: tx(S.hours), address: tx(S.address),
       nav: IS_MENU ? T.navHome : T.navMenu,
@@ -121,7 +121,6 @@
       if (now < new Date(now.getFullYear(), opened.getMonth(), opened.getDate())) years--;
       buildOdo($('[data-odo]'), calYear(opened), calYear(now));
       $('[data-stat-years]').textContent = num(years) + '+';
-      $('[data-stat-items]').textContent = num((data.sections || []).reduce((n, s) => n + s.groups.reduce((m, g) => m + g.items.length, 0), 0));
       $('#story').hidden = false;
     }
     const notice = tx(S.notice).trim();
@@ -130,18 +129,17 @@
       if ($('.hero')) $('.hero').classList.add('has-notice');
     }
     let year = String(new Date().getFullYear());
-    if (RTL) try { year = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { year: 'numeric' }).format(new Date()).replace(/[^۰-۹]/g, ''); } catch (e) {}
+    if (RTL) year = String(calYear(new Date()));
     $('[data-year]').textContent = year;
 
     const sections = (data.sections || []);
-    const count = s => s.groups.reduce((n, g) => n + g.items.length, 0);
 
     // Home page: category links into the menu page
     if ($('.hero__cats')) $('.hero__cats').innerHTML = sections.map(s => `
       <a class="cat" href="${BASE}menu/#sec-${esc(s.id)}">
         <span class="cat__fill"></span>
         <span class="cat__name">${esc(tx(s.title))}</span>
-        <span class="cat__meta"><span>${num(count(s))} ${T.items}</span><span class="cat__arrow">${arrow}</span></span>
+        <span class="cat__meta"><span class="cat__arrow">${arrow}</span></span>
       </a>`).join('');
 
     if (!$('#menu')) return;      // the rest builds the menu page
@@ -160,7 +158,7 @@
           <header class="sec__head">
             <span class="sec__word" aria-hidden="true">${esc(WORD[s.id] || tx(s.title))}</span>
             <h2 class="sec__title"><span class="mask"><span class="mask__in">${esc(tx(s.title))}</span></span></h2>
-            <p class="sec__count">${num(count(s))} ${T.items} · ${T.priceNote}</p>
+            <p class="sec__count">${T.priceNote}</p>
           </header>
           <div class="groups">${s.groups.map(groupHTML).join('')}</div>
         </div>
@@ -182,7 +180,7 @@
     const has = !!img;
     const price = it.price == null || it.price === ''
       ? `<span class="item__price is-empty">—</span>`
-      : `<span class="item__price">${fmtPrice(it.price)}${unit ? `<small class="item__unit">${esc(unit)}</small>` : ''}</span>`;
+      : `<span class="item__price">${fmtPrice(it.price)}</span>`;
     const desc = tx(it.desc);
     const tag = has ? 'button' : 'div';
     return `
