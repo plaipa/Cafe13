@@ -11,18 +11,23 @@
   root.lang = lang;
   root.dir = lang === 'fa' ? 'rtl' : 'ltr';
   const RTL = lang === 'fa';
+  const PAGE = root.dataset.page || 'home';      // 'home' (cafe info) or 'menu'
+  const BASE = root.dataset.base || '';          // path back to the site root
+  const IS_MENU = PAGE === 'menu';
 
   const T = {
     fa: { mapLabel: 'نقشهٔ محل کافه ۱۳', directions: 'مسیریابی', lead: 'قهوه، برگر و صبحانه', visitTitle: 'سر بزنید', addressLabel: 'آدرس', hoursLabel: 'ساعت کاری',
           phoneLabel: 'تلفن', igCta: 'اینستاگرام ما', priceNote: 'قیمت‌ها به هزار تومان', items: 'آیتم', out: 'تمام شد',
-          error: 'منو بارگذاری نشد. صفحه را دوباره باز کنید.', title: 'کافه ۱۳ تبریز | منوی قهوه، برگر و صبحانه' },
+          error: 'منو بارگذاری نشد. صفحه را دوباره باز کنید.', title: 'کافه ۱۳ تبریز | قهوه، برگر و صبحانه',
+          menuDocTitle: 'منوی کافه ۱۳ تبریز | قهوه، برگر و صبحانه', navMenu: 'منو', navHome: 'درباره کافه', menuTitle: 'منو', footLink: 'آدرس و نقشه' },
     en: { mapLabel: 'Map showing where Cafe 13 is', directions: 'Get directions', lead: 'Coffee, burgers and breakfast', visitTitle: 'Visit us', addressLabel: 'Address', hoursLabel: 'Hours',
           phoneLabel: 'Phone', igCta: 'Follow us', priceNote: 'Prices in thousand toman', items: 'items', out: 'Sold out',
-          error: 'The menu did not load. Please reload the page.', title: 'Cafe 13 Tabriz | Coffee, burgers and breakfast' }
+          error: 'The menu did not load. Please reload the page.', title: 'Cafe 13 Tabriz | Coffee, burgers and breakfast',
+          menuDocTitle: 'Menu | Cafe 13 Tabriz', navMenu: 'Menu', navHome: 'About', menuTitle: 'Menu', footLink: 'Address & map' }
   }[lang];
   const WORD = { cafe: 'Coffee', burger: 'Burger', breakfast: 'Breakfast' };
 
-  document.title = T.title;
+  document.title = IS_MENU ? T.menuDocTitle : T.title;
   const sw = document.querySelector('[data-lang-switch]');
   sw.textContent = RTL ? 'EN' : 'فا';
   sw.href = '?lang=' + (RTL ? 'en' : 'fa');
@@ -55,35 +60,38 @@
     unit = tx(S.priceUnit);
     const fill = {
       name: tx(S.name), city: tx(S.city), hours: tx(S.hours), address: tx(S.address),
+      nav: IS_MENU ? T.navHome : T.navMenu,
       ...T
     };
     $$('[data-t]').forEach(el => { const k = el.dataset.t; if (fill[k] != null) el.textContent = fill[k]; });
     const ig = 'https://www.instagram.com/' + encodeURIComponent((S.instagram || 'caffe.13').replace(/^@/, ''));
     $$('[data-ig]').forEach(a => a.href = ig);
     $$('.btn .ltr').forEach(s => s.textContent = '@' + (S.instagram || 'caffe.13').replace(/^@/, ''));
-    if (S.phone) {
+    if (S.phone && $('.visit__cell--phone')) {
       const cell = $('.visit__cell--phone'); cell.hidden = false;
       const a = $('[data-phone]'); a.textContent = S.phone; a.href = 'tel:' + S.phone.replace(/[^\d+]/g, '');
     }
     // Map: labels in the current language, directions link only when one is set
-    if (!RTL) $$('.map [data-en]').forEach(t => { t.textContent = t.dataset.en; });
-    $('.map__svg').setAttribute('aria-label', T.mapLabel);
-    const mapUrl = String(S.mapUrl || '').trim();
-    if (/^https:\/\//i.test(mapUrl)) { const a = $('[data-map-link]'); a.href = mapUrl; a.hidden = false; }
-    fitMap();
+    if ($('.map__svg')) {
+      if (!RTL) $$('.map [data-en]').forEach(t => { t.textContent = t.dataset.en; });
+      $('.map__svg').setAttribute('aria-label', T.mapLabel);
+      const mapUrl = String(S.mapUrl || '').trim();
+      if (/^https:\/\//i.test(mapUrl)) { const a = $('[data-map-link]'); a.href = mapUrl; a.hidden = false; }
+      fitMap();
+    }
 
     const st = S.story || {};
     const storyText = tx(st.text).trim();
-    if (storyText) {
+    if (storyText && $('#story')) {
       $('[data-t="storySince"]').textContent = tx(st.since);
       $('[data-t="storyTitle"]').textContent = tx(st.title);
       $('[data-t="storyText"]').textContent = storyText;
       $('#story').hidden = false;
     }
     const notice = tx(S.notice).trim();
-    if (notice) {
+    if (notice && $('[data-notice]')) {
       const n = $('[data-notice]'); n.textContent = notice; n.hidden = false;
-      $('.hero').classList.add('has-notice');
+      if ($('.hero')) $('.hero').classList.add('has-notice');
     }
     let year = String(new Date().getFullYear());
     if (RTL) try { year = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { year: 'numeric' }).format(new Date()).replace(/[^۰-۹]/g, ''); } catch (e) {}
@@ -92,13 +100,15 @@
     const sections = (data.sections || []);
     const count = s => s.groups.reduce((n, g) => n + g.items.length, 0);
 
-    // Hero category links
-    $('.hero__cats').innerHTML = sections.map(s => `
-      <a class="cat" href="#sec-${esc(s.id)}" data-go="sec-${esc(s.id)}">
+    // Home page: category links into the menu page
+    if ($('.hero__cats')) $('.hero__cats').innerHTML = sections.map(s => `
+      <a class="cat" href="${BASE}menu/#sec-${esc(s.id)}">
         <span class="cat__fill"></span>
         <span class="cat__name">${esc(tx(s.title))}</span>
         <span class="cat__meta"><span>${num(count(s))} ${T.items}</span><span class="cat__arrow">${arrow}</span></span>
       </a>`).join('');
+
+    if (!$('#menu')) return;      // the rest builds the menu page
 
     // Tabs and chips
     $('.tabs__row').innerHTML = sections.map((s, i) =>
@@ -132,7 +142,7 @@
   }
 
   function itemHTML(it) {
-    const img = it.image ? esc(it.image) : '';
+    const img = it.image ? esc(BASE + it.image.replace(/^\/+/, '')) : '';
     const has = !!img;
     const price = it.price == null || it.price === ''
       ? `<span class="item__price is-empty">—</span>`
@@ -169,17 +179,24 @@
 
   /* ---------- Smooth scroll ---------- */
   let lenis = null;
-  const headH = () => $('.top').offsetHeight + $('.tabs').offsetHeight;
-  function scrollToId(id) {
+  const headH = () => $('.top').offsetHeight + ($('.tabs') ? $('.tabs').offsetHeight : 0);
+  function scrollToId(id, instant) {
     const el = document.getElementById(id);
     if (!el) return;
-    const off = -headH() + (id.startsWith('sec-') ? 1 : -4);
-    if (lenis) {
+    const off = -headH() + (id.startsWith('sec-') ? 4 : -4);   // a few px past the boundary so the tab spy counts it as active
+    if (instant) {
+      const top = el.getBoundingClientRect().top + scrollY + off;
+      window.scrollTo(0, top);
+      if (lenis) lenis.scrollTo(top, { immediate: true, force: true });
+    } else if (lenis) {
       const dist = Math.abs(el.getBoundingClientRect().top + off);
       lenis.scrollTo(el, { offset: off, duration: Math.min(2, Math.max(.8, dist / 2600)) });
     }
-    else window.scrollTo({ top: el.getBoundingClientRect().top + scrollY + off, behavior: reduce ? 'auto' : 'smooth' });
+    else window.scrollTo({ top: el.getBoundingClientRect().top + scrollY + off, behavior: reduce || instant ? 'auto' : 'smooth' });
   }
+
+  // Arriving with #something in the address (menu section links, "address & map")
+  const goHash = () => { const h = decodeURIComponent(location.hash.slice(1)); if (h) scrollToId(h, true); };
 
   /* ---------- Interactions ---------- */
   function bind(data) {
@@ -203,6 +220,8 @@
     const ink = $('.tabs__ink');
     if (ink && i >= 0) ink.style.transform = `translateX(${(RTL ? -100 : 100) * i}%)`;
     chips().forEach(c => c.hidden = c.dataset.sec !== id);
+    const shown = chips().filter(c => !c.hidden);
+    if (shown.length && !shown.some(c => c.getAttribute('aria-current') === 'true')) setGroup(shown[0].dataset.go);
   }
   let chipTimer = 0;
   function setGroup(id) {
@@ -222,6 +241,7 @@
     }, 140);
   }
   function spy() {
+    if (!IS_MENU) return;
     const secs = $$('.sec'), groups = $$('.group');
     if (!secs.length) return;
     setSection(secs[0].id); setGroup(groups[0] && groups[0].id);
@@ -245,7 +265,7 @@
     data.sections.forEach(s => s.groups.forEach(g => g.items.forEach(i => { if (i.id === id) it = i; })));
     if (!it) return;
     const sh = $('.sheet');
-    $('.sheet__img img', sh).src = it.image;
+    $('.sheet__img img', sh).src = BASE + it.image.replace(/^\/+/, '');
     $('.sheet__img img', sh).alt = tx(it.name);
     $('.sheet__body', sh).innerHTML = `
       <h3>${esc(tx(it.name))}</h3>${RTL && it.name.en ? `<div class="en">${esc(it.name.en)}</div>` : ''}
@@ -283,7 +303,7 @@
     }
 
     // Hero disc turns and sinks as you scroll away
-    gsap.to('.hero__disc', { rotate: RTL ? 60 : -60, yPercent: 22, scale: .82, ease: 'none',
+    if ($('.hero__disc')) gsap.to('.hero__disc', { rotate: RTL ? 60 : -60, yPercent: 22, scale: .82, ease: 'none',
       scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
 
     // Big section words: scattered letters gather as the section arrives
@@ -305,9 +325,11 @@
     $$('.group__rule').forEach(r => gsap.from(r, { scaleX: 0, duration: 1.2, ease: 'line', scrollTrigger: { trigger: r, start: 'top 98%', once: true } }));
 
     // Menu rows rise in batches (and also when scrolling back up after a jump)
-    gsap.set('.item', { autoAlpha: 0, y: 18 });
-    const show = b => gsap.to(b, { autoAlpha: 1, y: 0, duration: .6, ease: 'power2.out', stagger: .04, overwrite: true });
-    ScrollTrigger.batch('.item', { start: 'top bottom+=60', onEnter: show, onEnterBack: show, interval: .06, batchMax: 10 });
+    if ($('.item')) {
+      gsap.set('.item', { autoAlpha: 0, y: 18 });
+      const show = b => gsap.to(b, { autoAlpha: 1, y: 0, duration: .6, ease: 'power2.out', stagger: .04, overwrite: true });
+      ScrollTrigger.batch('.item', { start: 'top bottom+=60', onEnter: show, onEnterBack: show, interval: .06, batchMax: 10 });
+    }
 
     // Footer mark draws itself, then fills
     const fp = $('.foot__mark path');
@@ -318,7 +340,7 @@
     }
 
     // Story
-    gsap.from('.story__since, .story__text', { y: 24, autoAlpha: 0, duration: 1, ease: 'power3.out', stagger: .12,
+    if ($('.story') && !$('.story').hidden) gsap.from('.story__since, .story__text', { y: 24, autoAlpha: 0, duration: 1, ease: 'power3.out', stagger: .12,
       scrollTrigger: { trigger: '.story', start: 'top 75%', once: true } });
 
     // Map: streets draw in, names fade up, the pin drops; the map drifts slowly as you scroll
@@ -335,7 +357,7 @@
     }
 
     // Visit rows
-    gsap.from('.visit__cell, .visit .btn', { y: 24, autoAlpha: 0, duration: 1, ease: 'power3.out', stagger: .08,
+    if ($('.visit__grid')) gsap.from('.visit__cell, .visit .btn', { y: 24, autoAlpha: 0, duration: 1, ease: 'power3.out', stagger: .08,
       scrollTrigger: { trigger: '.visit__grid', start: 'top 90%', once: true } });
 
     ScrollTrigger.refresh();
@@ -351,10 +373,18 @@
     return tl;
   }
 
+  function menuIntro() {
+    return gsap.timeline()
+      .from('.menuhead__kicker, .menuhead .hero__notice:not([hidden])', { y: 16, autoAlpha: 0, duration: .9, ease: 'power3.out', stagger: .08 }, .25)
+      .from('.menuhead__title .mask > span', { yPercent: 112, duration: 1.2, ease: 'power3.out' }, .1)
+      .from('.tabs', { y: 24, autoAlpha: 0, duration: .9, ease: 'power3.out' }, .45)
+      .from('.top', { yPercent: -100, duration: .9, ease: 'power3.out' }, .2);
+  }
+
   function loader() {
     const panels = $$('.loader__panels i');
     const circle = $('.loader__circle'), glyph = $('.loader__glyph');
-    const long = firstVisit;
+    const long = firstVisit && !IS_MENU;      // guests from the table QR code get the short one
     return gsap.timeline()
       .to(circle, { strokeDashoffset: 0, duration: long ? 1.2 : .6, ease: 'expo.inOut' })
       .to(glyph, { strokeDashoffset: 0, duration: long ? 1.3 : .6, ease: 'expo.inOut' }, '<+.25')
@@ -364,7 +394,7 @@
   }
 
   /* ---------- Boot ---------- */
-  const dataP = fetch('data/menu.json', { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  const dataP = fetch(BASE + 'data/menu.json', { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
 
   if (animate) {
     gsap.registerPlugin(ScrollTrigger, CustomEase);
@@ -377,17 +407,19 @@
     }).then(data => {
       initMotion(); spy();
       lenis && lenis.stop();
-      intro.eventCallback('onComplete', () => { root.classList.remove('is-loading'); lenis && lenis.start(); ScrollTrigger.refresh(); });
-      intro.add(heroIntro(), '<+.35');
+      goHash();                       // land on the linked section while the loader still covers the page
+      intro.eventCallback('onComplete', () => { root.classList.remove('is-loading'); lenis && lenis.start(); ScrollTrigger.refresh(); goHash(); });
+      intro.add(IS_MENU ? menuIntro() : heroIntro(), '<+.35');
       intro.play();
     }).catch(err => fail(err));
   } else {
-    dataP.then(data => { render(data); bind(data); spy(); }).catch(err => fail(err));
+    dataP.then(data => { render(data); bind(data); spy(); goHash(); }).catch(err => fail(err));
   }
 
   function fail(err) {
     console.error(err);
     root.classList.remove('is-loading');
-    $('#menu').innerHTML = `<p class="wrap" style="padding:48px 0">${T.error}</p>`;
+    const box = $('#menu') || $('#top');
+    if (box) box.insertAdjacentHTML('beforeend', `<p class="wrap" style="padding:48px 0">${T.error}</p>`);
   }
 })();

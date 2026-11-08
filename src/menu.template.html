@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fa" dir="rtl" data-page="menu" data-base="{{BASE}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>منوی کافه ۱۳ تبریز | قهوه، برگر و صبحانه</title>
+<meta name="description" content="منوی کافه ۱۳ در تبریز: قهوه و نوشیدنی، برگر و پیتزای دیترویتی، و صبحانه. Cafe 13 Tabriz menu.">
+<meta name="theme-color" content="#111111">
+<meta property="og:title" content="منوی کافه ۱۳">
+<meta property="og:description" content="قهوه، برگر و صبحانه">
+<meta property="og:image" content="https://caffe13.ir/assets/brand/logo-1024.png">
+<meta property="og:url" content="https://caffe13.ir/menu/">
+<link rel="canonical" href="https://caffe13.ir/menu/">
+<link rel="icon" href="{{BASE}}assets/brand/favicon.ico" sizes="any">
+<link rel="icon" href="{{BASE}}assets/brand/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="{{BASE}}assets/brand/apple-touch-icon.png">
+<link rel="manifest" href="{{BASE}}manifest.webmanifest">
+<link rel="preload" href="{{BASE}}assets/fonts/Vazirmatn-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{BASE}}assets/vendor/lenis.css">
+<link rel="stylesheet" href="{{BASE}}css/site.css">
+<script>(function(d){d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('is-loading');setTimeout(function(){d.classList.remove('is-loading')},9000)}})(document.documentElement)</script>
+</head>
+<body>
+
+<!-- Loader: a short version here, since guests arrive from the table QR code -->
+<div class="loader" aria-hidden="true">
+  <div class="loader__panels"><i></i><i></i><i></i><i></i></div>
+  <svg class="loader__mark" viewBox="0 0 1000 1000">
+    <circle class="loader__circle" cx="500" cy="500" r="480" pathLength="1" />
+    <path class="loader__glyph" pathLength="1" fill-rule="evenodd" d="{{GLYPH}}" />
+  </svg>
+</div>
+
+<header class="top">
+  <a class="top__logo" href="{{BASE}}" aria-label="Cafe 13"><img src="{{BASE}}assets/brand/logo.svg" alt="" width="36" height="36"></a>
+  <div class="top__end">
+    <a class="top__nav" data-t="nav" href="{{BASE}}"></a>
+    <a class="top__ig" data-ig href="https://www.instagram.com/caffe.13" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" class="dot"/></svg>
+    </a>
+    <a class="top__lang" data-lang-switch href="?lang=en">EN</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="menuhead">
+    <div class="wrap">
+      <p class="menuhead__kicker"><span class="hero__dot"></span><span data-t="name"></span></p>
+      <h1 class="menuhead__title"><span class="mask"><span data-t="menuTitle"></span></span></h1>
+      <p class="hero__notice" data-notice hidden></p>
+    </div>
+  </section>
+
+  <div class="menuwrap">
+    <div class="tabs" role="navigation">
+      <div class="tabs__row"></div>
+      <div class="tabs__chips"></div>
+    </div>
+
+    <div class="menu" id="menu"></div>
+  </div>
+</main>
+
+<footer class="foot">
+  <svg class="foot__mark" viewBox="0 0 1000 1000" aria-hidden="true"><path pathLength="1" fill-rule="evenodd" d="{{GLYPH}}"/></svg>
+  <div class="foot__row">
+    <p><span data-t="name"></span> · <span class="ltr" data-year></span></p>
+    <p data-t="priceNote"></p>
+    <p><a class="foot__link" data-t="footLink" href="{{BASE}}#visit"></a></p>
+  </div>
+</footer>
+
+<div class="sheet" hidden>
+  <div class="sheet__scrim" data-close></div>
+  <div class="sheet__panel" role="dialog" aria-modal="true">
+    <button class="sheet__x" data-close aria-label="Close">×</button>
+    <div class="sheet__img"><img alt=""></div>
+    <div class="sheet__body"></div>
+  </div>
+</div>
+
+<script src="{{BASE}}assets/vendor/gsap.min.js"></script>
+<script src="{{BASE}}assets/vendor/ScrollTrigger.min.js"></script>
+<script src="{{BASE}}assets/vendor/SplitText.min.js"></script>
+<script src="{{BASE}}assets/vendor/CustomEase.min.js"></script>
+<script src="{{BASE}}assets/vendor/lenis.min.js"></script>
+<script src="{{BASE}}js/site.js"></script>
+</body>
+</html>

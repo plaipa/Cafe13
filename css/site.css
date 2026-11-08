@@ -73,6 +73,13 @@ html:not(.is-loading) .loader { display: none; }
 .top__logo img { width: 36px; height: 36px; transition: transform .6s var(--ease); }
 .top__logo:active img { transform: scale(.92) rotate(-12deg); }
 .top__end { display: flex; align-items: center; gap: 8px; }
+.top__nav {
+  height: 40px; padding-inline: 18px; display: inline-flex; align-items: center; border-radius: 20px;
+  background: var(--yellow); color: var(--black); font-size: 14px; font-weight: 800; white-space: nowrap;
+  transition: background-color .35s var(--ease), color .35s var(--ease), transform .25s var(--ease);
+}
+.top__nav:active { transform: scale(.95); }
+@media (hover: hover) { .top__nav:hover { background: var(--red); color: var(--paper); } }
 .top__ig, .top__lang {
   height: 40px; min-width: 40px; display: grid; place-items: center; border-radius: 20px;
   border: 1px solid var(--g700); color: var(--paper);
@@ -313,6 +320,15 @@ html.js:not(.no-motion) .map .r1, html.js:not(.no-motion) .map .r2, html.js:not(
 html.js:not(.no-motion) .foot__mark path { fill: transparent; stroke-dasharray: 1; stroke-dashoffset: 1; }
 .foot__row { display: grid; gap: 4px; max-width: 1180px; margin: 0 auto; font-size: 13px; color: var(--g500); text-align: center; }
 .foot__row p { margin: 0; }
+.foot__link { color: var(--yellow); font-weight: 700; padding: 8px 4px; display: inline-block; border-bottom: 1px solid transparent; transition: border-color .3s; }
+@media (hover: hover) { .foot__link:hover { border-bottom-color: var(--yellow); } }
+
+/* Menu page: a short title block, then straight into the menu (guests arrive from the table QR code) */
+.menuhead { background: var(--black); padding: calc(var(--top) + 34px) 0 26px; }
+.menuhead__kicker { margin: 0 0 6px; display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--g400); }
+.menuhead__title { margin: 0; font-weight: 900; font-size: clamp(64px, 22vw, 150px); line-height: 1; letter-spacing: -.02em; color: var(--paper); }
+[dir="ltr"] .menuhead__title { font-family: var(--serif); font-weight: 400; letter-spacing: -.035em; line-height: .92; }
+.menuhead .hero__notice { margin: 18px 0 0; }
 
 /* ---------- Item sheet ---------- */
 .sheet { position: fixed; inset: 0; z-index: 60; }
