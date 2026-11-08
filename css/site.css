@@ -248,6 +248,42 @@ html:not(.is-loading) .loader { display: none; }
 .visit { background: var(--black); padding: 72px 0 80px; border-top: 1px solid #262626; }
 .visit__title { margin: 0 0 28px; font-size: 40px; font-weight: 900; line-height: 1.15; }
 [dir="ltr"] .visit__title { font-family: var(--serif); font-weight: 400; font-size: 52px; }
+/* Styled map: drawn from the street layout, greys with the logo's red and yellow */
+.map { position: relative; margin: 0 0 28px; height: 460px; overflow: hidden; border-radius: 22px; border: 1px solid #2a2a2a; background: #141414; isolation: isolate; }
+.map::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; box-shadow: inset 0 0 40px 6px #141414; }
+.map__svg { --u: 2.2; display: block; width: 100%; height: 100%; touch-action: manipulation; }
+.map__parks polygon, .map__parks ellipse, .map__parks circle { fill: url(#c13hatch); stroke: #262626; stroke-width: 3; }
+.map__parks .map__field { fill: #202020; stroke: #2c2c2c; }
+.map__roads path, .map__roads ellipse { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.map .r1 { stroke: #303030; stroke-width: 9; }
+.map .r2 { stroke: #3b3b3b; stroke-width: 16; }
+.map .r3 { stroke: #484848; stroke-width: 32; }
+.map .r2.hot, .map .r3.hot { stroke: #54482a; }
+.map .lbl { font-family: var(--fa); font-size: calc(13px * var(--u)); font-weight: 600; fill: #8c8c8c; text-anchor: middle; paint-order: stroke; stroke: #141414; stroke-width: calc(4px * var(--u)); stroke-linejoin: round; }
+.map .lbl--sm { font-size: calc(11.5px * var(--u)); font-weight: 500; fill: #6f6f6f; }
+.map .lbl--hot { fill: var(--yellow); font-weight: 700; }
+.map__pinscale { transform: scale(var(--u)); }
+.map__tail { fill: var(--red); }
+.map__head { fill: var(--red); stroke: var(--black); stroke-width: 3; }
+.map__num { font-family: var(--fa); font-size: 22px; font-weight: 900; fill: var(--yellow); }
+.map__tag rect { fill: var(--yellow); }
+.map__tag text { font-family: var(--fa); font-size: 15px; font-weight: 800; fill: var(--black); }
+.map__shadow { fill: rgba(0, 0, 0, .5); }
+.map__ring { fill: none; stroke: var(--red); stroke-width: 2.5; transform-box: fill-box; transform-origin: center; transform: scale(.15); opacity: 0; animation: map-ring 3s cubic-bezier(.2, .6, .3, 1) infinite; }
+.map__ring--b { animation-delay: 1.5s; }
+@keyframes map-ring { 0% { transform: scale(.15); opacity: .85; } 100% { transform: scale(1); opacity: 0; } }
+.map__go {
+  position: absolute; z-index: 2; inset-inline-end: 14px; bottom: 14px; height: 44px; padding: 0 20px; border-radius: 22px;
+  display: inline-flex; align-items: center; background: var(--yellow); color: var(--black); font-weight: 800; font-size: 15px;
+  transition: transform .25s var(--ease), background-color .3s, color .3s;
+}
+.map__go[hidden] { display: none; }
+.map__go:active { transform: scale(.96); }
+@media (hover: hover) { .map__go:hover { background: var(--red); color: var(--paper); } }
+html.js:not(.no-motion) .map .r1, html.js:not(.no-motion) .map .r2, html.js:not(.no-motion) .map .r3 { stroke-dasharray: 1; stroke-dashoffset: 1; }
+@media (min-width: 700px) { .map { height: 540px; border-radius: 28px; } }
+@media (prefers-reduced-motion: reduce) { .map__ring { animation: none; opacity: 0; } }
+
 .visit__grid { display: grid; gap: 0; border-top: 1px solid var(--g700); margin-bottom: 28px; }
 .visit__cell { padding: 16px 0; border-bottom: 1px solid var(--g700); display: flex; justify-content: space-between; gap: 16px; }
 .visit__cell[hidden] { display: none; }

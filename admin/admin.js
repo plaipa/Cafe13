@@ -153,7 +153,7 @@
     ['name', 'city', 'address', 'hours', 'priceUnit', 'notice'].forEach(k => { data.settings[k] = { fa: '', en: '', ...(data.settings[k] || {}) }; });
     const st = data.settings.story = data.settings.story || {};
     ['since', 'title', 'text'].forEach(k => { st[k] = { fa: '', en: '', ...(st[k] || {}) }; });
-    ['phone', 'instagram'].forEach(k => { if (data.settings[k] == null) data.settings[k] = ''; });
+    ['phone', 'instagram', 'mapUrl'].forEach(k => { if (data.settings[k] == null) data.settings[k] = ''; });
     data.sections = data.sections || [];
     data.sections.forEach(s => {
       s.title = { fa: '', en: '', ...(s.title || {}) };
@@ -296,6 +296,7 @@
           <label class="field"><span>تلفن (خالی = نمایش داده نمی‌شود)</span><input data-f="phone" dir="ltr" inputmode="tel" value="${esc(S.phone)}"></label>
           <label class="field"><span>اینستاگرام</span><input data-f="instagram" dir="ltr" value="${esc(S.instagram)}"></label>
         </div>
+        <label class="field"><span>لینک مسیریابی (نشان، بلد یا گوگل‌مپ؛ باید با https:// شروع شود. خالی = دکمه نمایش داده نمی‌شود)</span><input data-f="mapUrl" dir="ltr" inputmode="url" spellcheck="false" autocapitalize="off" value="${esc(S.mapUrl)}"></label>
         ${pair('priceUnit', 'واحد قیمت')}
         ${pair('notice', 'اطلاعیه بالای سایت (خالی = بدون اطلاعیه)')}
       </section>

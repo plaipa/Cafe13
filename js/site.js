@@ -13,10 +13,10 @@
   const RTL = lang === 'fa';
 
   const T = {
-    fa: { lead: 'قهوه، برگر و صبحانه', visitTitle: 'سر بزنید', addressLabel: 'آدرس', hoursLabel: 'ساعت کاری',
+    fa: { mapLabel: 'نقشهٔ محل کافه ۱۳', directions: 'مسیریابی', lead: 'قهوه، برگر و صبحانه', visitTitle: 'سر بزنید', addressLabel: 'آدرس', hoursLabel: 'ساعت کاری',
           phoneLabel: 'تلفن', igCta: 'اینستاگرام ما', priceNote: 'قیمت‌ها به هزار تومان', items: 'آیتم', out: 'تمام شد',
           error: 'منو بارگذاری نشد. صفحه را دوباره باز کنید.', title: 'کافه ۱۳ تبریز | منوی قهوه، برگر و صبحانه' },
-    en: { lead: 'Coffee, burgers and breakfast', visitTitle: 'Visit us', addressLabel: 'Address', hoursLabel: 'Hours',
+    en: { mapLabel: 'Map showing where Cafe 13 is', directions: 'Get directions', lead: 'Coffee, burgers and breakfast', visitTitle: 'Visit us', addressLabel: 'Address', hoursLabel: 'Hours',
           phoneLabel: 'Phone', igCta: 'Follow us', priceNote: 'Prices in thousand toman', items: 'items', out: 'Sold out',
           error: 'The menu did not load. Please reload the page.', title: 'Cafe 13 Tabriz | Coffee, burgers and breakfast' }
   }[lang];
@@ -65,6 +65,13 @@
       const cell = $('.visit__cell--phone'); cell.hidden = false;
       const a = $('[data-phone]'); a.textContent = S.phone; a.href = 'tel:' + S.phone.replace(/[^\d+]/g, '');
     }
+    // Map: labels in the current language, directions link only when one is set
+    if (!RTL) $$('.map [data-en]').forEach(t => { t.textContent = t.dataset.en; });
+    $('.map__svg').setAttribute('aria-label', T.mapLabel);
+    const mapUrl = String(S.mapUrl || '').trim();
+    if (/^https:\/\//i.test(mapUrl)) { const a = $('[data-map-link]'); a.href = mapUrl; a.hidden = false; }
+    fitMap();
+
     const st = S.story || {};
     const storyText = tx(st.text).trim();
     if (storyText) {
@@ -143,6 +150,21 @@
           ${it.available === false ? `<span class="item__out">${T.out}</span>` : ''}
         </${tag}>
       </li>`;
+  }
+
+  /* ---------- Map sizing: keep the pin and street names a readable screen size at any width ---------- */
+  function fitMap() {
+    const svg = $('.map__svg');
+    if (!svg || svg.dataset.fit) return;
+    svg.dataset.fit = '1';
+    const fit = () => {
+      const r = svg.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const s = Math.max(r.width / 1560, r.height / 1300);   // 'slice' scale from viewBox units to pixels
+      svg.style.setProperty('--u', (1 / s).toFixed(3));
+    };
+    fit();
+    if (window.ResizeObserver) new ResizeObserver(fit).observe(svg); else addEventListener('resize', fit);
   }
 
   /* ---------- Smooth scroll ---------- */
@@ -298,6 +320,19 @@
     // Story
     gsap.from('.story__since, .story__text', { y: 24, autoAlpha: 0, duration: 1, ease: 'power3.out', stagger: .12,
       scrollTrigger: { trigger: '.story', start: 'top 75%', once: true } });
+
+    // Map: streets draw in, names fade up, the pin drops; the map drifts slowly as you scroll
+    const map = $('[data-map]');
+    if (map) {
+      gsap.set('.map__pinbody', { transformOrigin: '50% 100%' });
+      gsap.timeline({ scrollTrigger: { trigger: map, start: 'top 82%', once: true } })
+        .from('.map__parks', { autoAlpha: 0, duration: 1, ease: 'power2.out' }, 0)
+        .to('.map .r3, .map .r2, .map .r1', { strokeDashoffset: 0, duration: 1.7, ease: 'power2.inOut', stagger: { each: .035, from: 'start' } }, 0)
+        .from('.map__labels .lbl', { autoAlpha: 0, y: 8, duration: .8, ease: 'power2.out', stagger: .04 }, .9)
+        .from('.map__pinbody', { y: -90, autoAlpha: 0, duration: 1.1, ease: 'bounce.out' }, 1.2);
+      gsap.fromTo('.map__world', { y: 34 }, { y: -34, ease: 'none',
+        scrollTrigger: { trigger: map, start: 'top bottom', end: 'bottom top', scrub: .6 } });
+    }
 
     // Visit rows
     gsap.from('.visit__cell, .visit .btn', { y: 24, autoAlpha: 0, duration: 1, ease: 'power3.out', stagger: .08,
