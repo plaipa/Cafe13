@@ -371,6 +371,10 @@ html.js:not(.no-motion) .foot__mark path { fill: transparent; stroke-dasharray: 
 .foot__row p { margin: 0; }
 .foot__link { color: var(--yellow); font-weight: 700; padding: 8px 4px; display: inline-block; border-bottom: 1px solid transparent; transition: border-color .3s; }
 @media (hover: hover) { .foot__link:hover { border-bottom-color: var(--yellow); } }
+/* Maker's credit: small, dim and always left-to-right; the name is the only link */
+.foot__credit { max-width: 1180px; margin: 14px auto 0; padding-top: 14px; border-top: 1px solid #1f1f1f; text-align: center; direction: ltr; font: 400 11px/1.6 var(--serif, Georgia, serif); font-style: italic; letter-spacing: .02em; color: #5a5a5a; }
+.foot__credit a { color: #7a7a7a; padding: 6px 2px; transition: color .3s; }
+@media (hover: hover) { .foot__credit a:hover { color: var(--yellow); } }
 
 /* Menu page: a short title block, then straight into the menu (guests arrive from the table QR code) */
 .menuhead { background: var(--black); padding: calc(var(--top) + 34px) 0 26px; }
