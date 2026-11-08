@@ -9,6 +9,7 @@
 Placeholders: {{BASE}} path back to the site root, {{GLYPH}} the "13" outline
 from assets/brand/logo-mark.svg, {{MAP}} the map from src/partials/map.html.
 """
+import hashlib
 import re
 from pathlib import Path
 
@@ -20,8 +21,17 @@ pages = [
     ('src/index.template.html', 'index.html', ''),
     ('src/menu.template.html', 'menu/index.html', '../'),
 ]
+def versioned(m):
+    """Adds ?v=<content hash> to a local style or script, so phones never mix
+    a new page with an old cached stylesheet or script after an update."""
+    attr, path = m.group(1), m.group(2)
+    digest = hashlib.sha1((root / path).read_bytes()).hexdigest()[:8]
+    return f'{attr}="{{{{BASE}}}}{path}?v={digest}"'
+
+
 for src, out, base in pages:
     html = (root / src).read_text(encoding='utf-8')
+    html = re.sub(r'(href|src)="\{\{BASE\}\}((?:css|js|assets/vendor)/[^"?]+\.(?:css|js))"', versioned, html)
     html = html.replace('{{MAP}}', map_html).replace('{{GLYPH}}', glyph).replace('{{BASE}}', base)
     target = root / out
     target.parent.mkdir(parents=True, exist_ok=True)
