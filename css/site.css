@@ -102,10 +102,11 @@ html:not(.is-loading) .loader { display: none; }
 .hero__disc {
   /* sized by the screen height so it always ends above the words */
   --d: max(200px, min(108vw, calc(100svh - 456px - var(--notice, 0px))));
-  position: absolute; width: var(--d); aspect-ratio: 1;
+  position: absolute; z-index: 31; width: var(--d); aspect-ratio: 1;
   top: calc(var(--top) - .08 * var(--d)); inset-inline-start: calc(-.3 * var(--d));
-  will-change: transform;
+  pointer-events: none;
 }
+.hero__disc img { will-change: transform; }
 [dir="ltr"] .hero__disc { inset-inline-start: auto; inset-inline-end: calc(-.3 * var(--d)); }
 .hero__disc img { width: 100%; height: 100%; }
 .hero__inner { position: relative; width: 100%; max-width: 1180px; margin-inline: auto; }
@@ -293,6 +294,10 @@ html:not(.is-loading) .loader { display: none; }
   .story__stats { margin-top: 24px; }
   .stat__num { font-size: 68px; }
   .story__cta { width: 280px; }
+  /* No headline: the text takes the first column, the years and the button the second */
+  .story--plain .story__body { grid-column: 1; grid-row: 4 / span 2; }
+  .story--plain .story__stats { grid-row: 4; margin-top: 0; }
+  .story--plain .story__cta { grid-row: 5; }
 }
 
 /* ---------- Visit ---------- */

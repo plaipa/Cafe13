@@ -113,7 +113,9 @@
     const storyText = tx(st.text).trim();
     if (storyText && $('#story')) {
       $('[data-t="storySince"]').textContent = tx(st.since);
-      $('[data-t="storyTitle"]').textContent = tx(st.title);
+      const storyTitle = tx(st.title).trim();   // optional: empty in the admin panel = no headline
+      if (storyTitle) $('[data-t="storyTitle"]').textContent = storyTitle;
+      else { $('.story__title').remove(); $('#story').classList.add('story--plain'); }
       $('[data-story-body]').innerHTML = storyText.split(/\n+/).map(p => p.trim()).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join('');
       const opened = new Date((/^\d{4}-\d\d-\d\d$/.test(st.opened || '') ? st.opened : '2016-02-24') + 'T12:00:00');
       const now = new Date();
@@ -336,9 +338,33 @@
       gsap.ticker.lagSmoothing(0);
     }
 
-    // Hero disc turns and sinks as you scroll away
-    if ($('.hero__disc')) gsap.to('.hero__disc', { rotate: RTL ? 60 : -60, yPercent: 22, scale: .82, ease: 'none',
-      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+    // Hero disc docks into the header: as you scroll it shrinks and flies to the small logo, then hands over to it.
+    // The motion is on the disc's image, so the intro (on the disc itself) never fights it.
+    const disc = $('.hero__disc'), discImg = $('.hero__disc img'), topLogo = $('.top__logo img');
+    if (disc && discImg && topLogo) {
+      const geo = () => {
+        // Half a screen of scroll: short enough that the disc reaches the bar before the hero words catch up with it
+        const hero = $('.hero'), d = disc.offsetWidth, end = innerHeight * .5;
+        const cx = hero.getBoundingClientRect().left + disc.offsetLeft + d / 2;
+        const cy = hero.offsetTop + disc.offsetTop + d / 2;          // page position, before any scroll
+        const lr = topLogo.getBoundingClientRect();
+        return { end, s: lr.width / d, dx: lr.left + lr.width / 2 - cx, dy: end + $('.top').offsetHeight / 2 - cy };
+      };
+      let g = geo();
+      const dock = on => { topLogo.style.opacity = on ? '' : '0'; disc.style.visibility = on ? 'hidden' : ''; };
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: '.hero', start: 'top top', end: () => '+=' + g.end, scrub: true, invalidateOnRefresh: true,
+          onRefreshInit: () => { g = geo(); },
+          onUpdate: self => dock(self.progress > .995),
+          onRefresh: self => dock(self.progress > .995)
+        }
+      })
+        // y stays linear (the scroll itself is linear, so the disc only ever rises); x eases in, which bends the path into an arc
+        .fromTo(discImg, { x: 0 }, { x: () => g.dx, ease: 'power2.in', duration: 1 }, 0)
+        .fromTo(discImg, { y: 0 }, { y: () => g.dy, ease: 'none', duration: 1 }, 0)
+        .fromTo(discImg, { scale: 1 }, { scale: () => g.s, ease: 'power2.out', duration: 1 }, 0);
+    }
 
     // Big section words: scattered letters gather as the section arrives
     $$('.sec__word').forEach(w => {

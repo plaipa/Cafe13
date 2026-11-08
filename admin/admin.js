@@ -403,7 +403,7 @@
           <label class="field"><span>برچسب تاریخ (انگلیسی)</span><input data-f="story.since.en" dir="ltr" value="${esc(S.story.since.en)}"></label>
         </div>
         <div class="field-row">
-          <label class="field"><span>عنوان (فارسی)</span><input data-f="story.title.fa" value="${esc(S.story.title.fa)}"></label>
+          <label class="field"><span>عنوان (فارسی؛ خالی = بدون تیتر)</span><input data-f="story.title.fa" value="${esc(S.story.title.fa)}"></label>
           <label class="field"><span>عنوان (انگلیسی)</span><input data-f="story.title.en" dir="ltr" value="${esc(S.story.title.en)}"></label>
         </div>
         <label class="field"><span>متن (فارسی)</span><textarea data-f="story.text.fa" rows="6">${esc(S.story.text.fa)}</textarea></label>
