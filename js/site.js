@@ -200,8 +200,17 @@
         <div class="group__head"><h3 class="group__title">${esc(tx(g.title))}</h3>${RTL && g.title.en ? `<span class="group__en">${esc(g.title.en)}</span>` : ''}</div>
         <div class="group__rule"></div>
         ${g.note && tx(g.note) ? `<p class="group__note">${esc(tx(g.note))}</p>` : ''}
-        <ul class="items">${g.items.map(itemHTML).join('')}</ul>
+        ${tagsOnly(g) ? `<ul class="items items--tags">${g.items.map(tagHTML).join('')}</ul>` : `<ul class="items">${g.items.map(itemHTML).join('')}</ul>`}
       </div>`;
+  }
+
+  // The add-ons group is just names (no price, photo or description), like the printed menu's list: show it as compact tags.
+  // Only this group: other groups without prices (e.g. brewed coffee) are real menu items and stay normal rows.
+  const noPrice = it => it.price == null || it.price === '';
+  const tagsOnly = g => g.id === 'addons' && g.items.length > 0 && g.items.every(it => noPrice(it) && !it.image && !tx(it.desc));
+  function tagHTML(it) {
+    const out = it.available === false;
+    return `<li class="item tag${out ? ' is-out' : ''}" data-id="${esc(it.id)}"><span class="tag__name">${esc(tx(it.name))}</span>${RTL && it.name && it.name.en ? `<span class="tag__en">${esc(it.name.en)}</span>` : ''}${out ? `<span class="tag__out">${T.out}</span>` : ''}</li>`;
   }
 
   function itemHTML(it) {
