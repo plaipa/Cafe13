@@ -118,6 +118,15 @@
         else requestAnimationFrame(() => requestAnimationFrame(() => show(true)));
       }
     }
+    // Business data for search engines: keep the phone, name, address and map link in step with the settings
+    const ld = $('script[type="application/ld+json"]');
+    if (ld) try {
+      const j = JSON.parse(ld.textContent);
+      if (S.name && S.name.fa) j.name = S.name.fa;
+      if (S.address && S.address.fa) (j.address = j.address || {}).streetAddress = latin(S.address.fa);
+      if (/^0\d{10}$/.test(phone)) j.telephone = '+98' + phone.slice(1); else delete j.telephone;
+      ld.textContent = JSON.stringify(j);
+    } catch (e) {}
     // Map: labels in the current language, directions link only when one is set
     if ($('.map__svg')) {
       if (!RTL) $$('.map [data-en]').forEach(t => { t.textContent = t.dataset.en; });

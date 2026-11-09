@@ -374,13 +374,13 @@ html.js:not(.no-motion) .map .r1, html.js:not(.no-motion) .map .r2, html.js:not(
 .foot__mark { display: block; width: min(86vw, 520px); margin: 0 auto 8px; overflow: visible; }
 .foot__mark path { fill: var(--yellow); stroke: var(--yellow); stroke-width: 3; }
 html.js:not(.no-motion) .foot__mark path { fill: transparent; stroke-dasharray: 1; stroke-dashoffset: 1; }
-.foot__row { display: grid; gap: 4px; max-width: 1180px; margin: 0 auto; font-size: 13px; color: var(--g500); text-align: center; }
+.foot__row { display: grid; gap: 4px; max-width: 1180px; margin: 0 auto; font-size: 13px; color: var(--g400); text-align: center; }
 .foot__row p { margin: 0; }
-.foot__link { color: var(--yellow); font-weight: 700; padding: 8px 4px; display: inline-block; border-bottom: 1px solid transparent; transition: border-color .3s; }
+.foot__link { color: var(--yellow); font-weight: 700; padding: 8px 14px; min-width: 48px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; border-bottom: 1px solid transparent; transition: border-color .3s; }
 @media (hover: hover) { .foot__link:hover { border-bottom-color: var(--yellow); } }
 /* Maker's credit: small, dim and always left-to-right; the name is the only link */
-.foot__credit { max-width: 1180px; margin: 14px auto 0; padding-top: 14px; border-top: 1px solid #1f1f1f; text-align: center; direction: ltr; font: 400 11px/1.6 var(--serif, Georgia, serif); font-style: italic; letter-spacing: .02em; color: #5a5a5a; }
-.foot__credit a { color: #7a7a7a; padding: 6px 2px; transition: color .3s; }
+.foot__credit { max-width: 1180px; margin: 14px auto 0; padding-top: 14px; border-top: 1px solid #1f1f1f; text-align: center; direction: ltr; font: 400 11px/1.6 var(--serif, Georgia, serif); font-style: italic; letter-spacing: .02em; color: #8a8a8a; }
+.foot__credit a { color: #a8a8a8; padding: 6px 2px; transition: color .3s; }
 @media (hover: hover) { .foot__credit a:hover { color: var(--yellow); } }
 
 /* Menu page: a short title block, then straight into the menu (guests arrive from the table QR code) */
@@ -412,7 +412,7 @@ html.js:not(.no-motion) .foot__mark path { fill: transparent; stroke-dasharray: 
 .call {
   position: fixed; z-index: 40; inset-inline: 0; bottom: calc(14px + var(--safe-b)); width: max-content; margin-inline: auto;
   display: flex; align-items: center; gap: 12px; height: 56px; padding-inline: 9px 24px; border-radius: 28px;
-  background: var(--red); color: var(--paper); font-size: 16px; font-weight: 800; line-height: 1; white-space: nowrap;
+  background: #C42B1A; color: var(--paper); font-size: 16px; font-weight: 800; line-height: 1; white-space: nowrap;
   box-shadow: 0 12px 32px rgba(0, 0, 0, .45), 0 2px 6px rgba(0, 0, 0, .25);
   transform: translateY(calc(100% + 30px + var(--safe-b))); transition: transform .7s var(--ease), background-color .35s var(--ease), color .35s var(--ease);
 }
@@ -424,7 +424,7 @@ html:not(.is-loading) .call.is-shown:active { transform: scale(.96); }
 [dir="rtl"] .call__ring svg { transform: scaleX(-1); }
 .call__ring::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--paper); animation: call-ping 2.6s cubic-bezier(.2, .6, .3, 1) infinite; }
 @keyframes call-ping { 0% { transform: scale(1); opacity: .8; } 70%, 100% { transform: scale(1.7); opacity: 0; } }
-.call__num { display: none; font-weight: 600; color: rgba(247, 247, 245, .8); }
+.call__num { display: none; font-weight: 600; color: var(--paper); }
 html.has-call .foot { padding-bottom: calc(96px + var(--safe-b)); }
 @media (hover: hover) { .call:hover { background: var(--black); color: var(--yellow); } .call:hover .call__ring { background: var(--red); color: var(--paper); } .call:hover .call__num { color: var(--g400); } }
 @media (prefers-reduced-motion: reduce) { .call__ring::after { animation: none; opacity: 0; } }
