@@ -275,7 +275,7 @@ html:not(.is-loading) .loader { display: none; }
 .story__title { margin: 0 0 22px; font-size: 36px; font-weight: 900; line-height: 1.35; text-wrap: balance; }
 .story__title .mask > span { display: block; }
 [dir="ltr"] .story__title { font-family: var(--serif); font-weight: 400; font-size: 48px; line-height: 1.02; letter-spacing: -.02em; }
-.story__body p { margin: 0 0 16px; font-size: 18px; line-height: 2; color: #222; max-width: 34em; }
+.story__body p { margin: 0 0 16px; font-size: 18px; line-height: 2; color: #222; max-width: 34em; text-wrap: balance; }
 [dir="ltr"] .story__body p { line-height: 1.7; }
 
 .story__stats { display: grid; grid-template-columns: 1fr; margin: 30px 0 32px; border-top: 3px solid var(--black); }
