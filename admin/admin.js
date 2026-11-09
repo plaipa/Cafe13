@@ -355,8 +355,8 @@
             <label class="field"><span>نام دسته (انگلیسی)</span><input data-f="title.en" dir="ltr" value="${esc(g.title.en)}"></label>
           </div>
           <div class="field-row">
-            <label class="field"><span>یادداشت زیر دسته (فارسی)</span><input data-f="note.fa" value="${esc(g.note.fa)}"></label>
-            <label class="field"><span>یادداشت (انگلیسی)</span><input data-f="note.en" dir="ltr" value="${esc(g.note.en)}"></label>
+            <label class="field"><span>یادداشت زیر دسته (فارسی)</span><textarea data-f="note.fa" rows="5">${esc(g.note.fa)}</textarea></label>
+            <label class="field"><span>یادداشت (انگلیسی)</span><textarea data-f="note.en" dir="ltr" rows="5">${esc(g.note.en)}</textarea></label>
           </div>
           <div class="acts"><button class="btn btn--danger btn--sm" type="button" data-act="group-del">حذف این دسته</button></div>
         </div>` : ''}
