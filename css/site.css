@@ -99,16 +99,23 @@ html:not(.is-loading) .loader { display: none; }
   padding: calc(var(--top) + 24px) var(--pad) calc(28px + var(--safe-b));
   background: var(--black);
 }
-.hero__disc {
-  /* sized by the screen height so it always ends above the words */
-  --d: max(200px, min(108vw, calc(100svh - 456px - var(--notice, 0px))));
-  position: absolute; width: var(--d); aspect-ratio: 1;
-  top: calc(var(--top) - .08 * var(--d)); inset-inline-start: calc(-.3 * var(--d));
-  will-change: transform;
+/* Coffee film behind the words: a poster first, the video fades in once it plays */
+.hero__film { position: absolute; inset: 0; z-index: 0; overflow: hidden; background: #120d0a; will-change: opacity, transform; }
+.hero__reel {
+  position: absolute; inset: 0; will-change: transform;
+  background: #120d0a url("../assets/hero/coffee-land.webp") center / cover no-repeat;
 }
-[dir="ltr"] .hero__disc { inset-inline-start: auto; inset-inline-end: calc(-.3 * var(--d)); }
-.hero__disc img { width: 100%; height: 100%; }
-.hero__inner { position: relative; width: 100%; max-width: 1180px; margin-inline: auto; }
+.hero__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.4s var(--ease); pointer-events: none; }
+.hero__video.is-on { opacity: 1; }
+/* shade: keeps the words readable and melts the film into the page below */
+.hero__film::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(to bottom, rgba(17, 17, 17, .55) 0, rgba(17, 17, 17, .05) calc(var(--top) + 90px), rgba(17, 17, 17, .1) 40%, rgba(17, 17, 17, .82) 70%, var(--black) 100%),
+    radial-gradient(120% 90% at 50% 40%, transparent 60%, rgba(0, 0, 0, .35) 100%);
+}
+@media (max-aspect-ratio: 1/1) { .hero__reel { background-image: url("../assets/hero/coffee-port.webp"); } }
+.hero__inner { position: relative; z-index: 1; width: 100%; max-width: 1180px; margin-inline: auto; }
 .hero__kicker {
   margin: 0 0 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
   font-size: 14px; color: var(--g400);
@@ -407,7 +414,6 @@ html.js:not(.no-motion) .foot__mark path { fill: transparent; stroke-dasharray: 
   .hero__cats { grid-template-columns: repeat(3, 1fr); border-top: 0; gap: 0; }
   .cat { border-top: 1px solid var(--g700); padding: 18px 16px; }
   .cat + .cat { border-inline-start: 1px solid var(--g700); }
-  .hero__disc { --d: min(80vw, calc(100svh - 330px - var(--notice, 0px))); }
   .tabs__chips { justify-content: center; flex-wrap: wrap; }
   .groups { display: grid; grid-template-columns: 1fr 1fr; gap: 0 56px; align-items: start; }
   .visit__grid { grid-template-columns: repeat(3, 1fr); }
@@ -419,8 +425,17 @@ html.js:not(.no-motion) .foot__mark path { fill: transparent; stroke-dasharray: 
 }
 @media (min-width: 1100px) {
   .hero { align-items: center; }
-  .hero__disc { --d: min(600px, calc(100svh - 160px)); top: calc(50% - .5 * var(--d) + 30px); inset-inline-start: auto; inset-inline-end: calc(50% - 590px); }
-  [dir="ltr"] .hero__disc { inset-inline-end: auto; inset-inline-start: calc(50% - 590px); }
+  /* words sit on the reading side, so the shade leans that way */
+  .hero__film::after {
+    background:
+      linear-gradient(to left, rgba(17, 17, 17, .9) 0, rgba(17, 17, 17, .6) 34%, rgba(17, 17, 17, .08) 68%),
+      linear-gradient(to bottom, rgba(17, 17, 17, .6) 0, transparent calc(var(--top) + 90px), transparent 70%, var(--black) 100%);
+  }
+  [dir="ltr"] .hero__film::after {
+    background:
+      linear-gradient(to right, rgba(17, 17, 17, .9) 0, rgba(17, 17, 17, .6) 34%, rgba(17, 17, 17, .08) 68%),
+      linear-gradient(to bottom, rgba(17, 17, 17, .6) 0, transparent calc(var(--top) + 90px), transparent 70%, var(--black) 100%);
+  }
   .hero__inner .hero__lead, .hero__title, .hero__kicker { max-width: 500px; }
   .hero__cats { max-width: 500px; grid-template-columns: 1fr; }
   .cat + .cat { border-inline-start: 0; }

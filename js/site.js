@@ -338,8 +338,8 @@
       gsap.ticker.lagSmoothing(0);
     }
 
-    // Hero disc turns and sinks as you scroll away
-    if ($('.hero__disc')) gsap.to('.hero__disc', { rotate: RTL ? 60 : -60, yPercent: 22, scale: .82, ease: 'none',
+    // Hero film drifts down, swells a little and fades out as you scroll away
+    if ($('.hero__film')) gsap.to('.hero__film', { autoAlpha: 0, yPercent: 16, scale: 1.08, ease: 'none',
       scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
 
     // Big section words: scattered letters gather as the section arrives
@@ -431,7 +431,8 @@
 
   function heroIntro() {
     const tl = gsap.timeline();
-    tl.from('.hero__disc', { scale: .55, rotate: RTL ? -70 : 70, autoAlpha: 0, duration: 1.8, ease: 'expo.out' }, 0)
+    // the film punches in from close up and settles, like the opening shot of a film
+    tl.from('.hero__reel', { scale: 1.38, autoAlpha: 0, duration: 2.8, ease: 'expo.out' }, 0)
       .from('.hero__name', { yPercent: 110, duration: 1.4, ease: 'power3.out' }, .15)
       .from('.hero__kicker, .hero__lead, .hero__notice:not([hidden])', { y: 20, autoAlpha: 0, duration: 1.1, ease: 'power3.out', stagger: .1 }, .4)
       .from('.cat', { y: 30, autoAlpha: 0, duration: 1, ease: 'power3.out', stagger: .08 }, .55)
@@ -458,6 +459,30 @@
       .to('.loader__mark', { scale: .7, autoAlpha: 0, duration: .5, ease: 'power3.in' }, '>+.1')
       .to(panels, { yPercent: gsap.utils.wrap([-100, 100]), duration: 1.1, ease: 'expo.inOut', stagger: .07 }, '<+.2');
   }
+
+  /* ---------- Hero film: slow-motion coffee beans behind the cafe's name ----------
+     One video per visit: portrait for phones, landscape for wide screens. WebM (VP9) is the lighter file;
+     Apple's WebKit gets H.264 first, which every iPhone decodes in hardware. Without motion or with
+     data saver on, only the still poster shows. The video plays only while the hero is on screen. */
+  function film() {
+    const box = $('[data-film]'), v = box && $('video', box);
+    if (!v) return;
+    const saveData = !!(navigator.connection && navigator.connection.saveData);
+    if (reduce || saveData) return;
+    const name = BASE + 'assets/hero/coffee-' + (matchMedia('(max-aspect-ratio: 1/1)').matches ? 'port' : 'land');
+    const ua = navigator.userAgent;
+    const appleWebKit = /AppleWebKit/.test(ua) && !/Chrome|Chromium|CriOS|Android|Edg/.test(ua) || /iPhone|iPad|iPod/.test(ua);
+    const webm = `<source src="${name}.webm" type='video/webm; codecs="vp9"'>`, mp4 = `<source src="${name}.mp4" type="video/mp4">`;
+    v.muted = true; v.defaultMuted = true; v.playsInline = true;
+    v.innerHTML = appleWebKit ? mp4 + webm : webm + mp4;
+    v.preload = 'auto';
+    v.addEventListener('playing', () => v.classList.add('is-on'), { once: true });
+    const play = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
+    v.load();
+    if ('IntersectionObserver' in window) new IntersectionObserver(es => { es[0].isIntersecting ? play() : v.pause(); }).observe(box);
+    else play();
+  }
+  film();
 
   /* ---------- Boot ---------- */
   const dataP = fetch(BASE + 'data/menu.json', { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
