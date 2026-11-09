@@ -411,11 +411,11 @@
         .from('.map__labels .lbl', { autoAlpha: 0, y: 8, duration: .8, ease: 'power2.out', stagger: .04 }, .9)
         .from('.map__pinbody', { y: -90, autoAlpha: 0, duration: 1.1, ease: 'bounce.out' }, 1.2);
       // Aerial fly-in: the map starts high above the neighbourhood and, as you scroll down, dives toward the cafe's pin
-      const svg = $('.map__svg'), ZOOM_FAR = .5, ZOOM_NEAR = 1.4, PIN = '928 628';
+      const svg = $('.map__svg'), ZOOM_FAR = .5, ZOOM_NEAR = 1.1, PIN = '928 628';
       const flyTo = () => {
         const z = +gsap.getProperty('.map__world', 'scale');
         svg.style.setProperty('--z', z.toFixed(3));                                            // keeps the pin a constant screen size
-        svg.style.setProperty('--lo', Math.min(1, Math.max(0, (z - .7) / .5)).toFixed(3));     // small street names appear as we get close
+        svg.style.setProperty('--lo', Math.min(1, Math.max(0, (z - .6) / .4)).toFixed(3));     // small street names appear as we get close
       };
       gsap.fromTo('.map__world', { scale: ZOOM_FAR, svgOrigin: PIN }, { scale: ZOOM_NEAR, svgOrigin: PIN, ease: 'power1.inOut', onUpdate: flyTo,
         scrollTrigger: { trigger: map, start: 'top 88%', end: 'top 22%', scrub: .8 } });
