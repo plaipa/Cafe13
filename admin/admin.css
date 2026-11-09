@@ -60,6 +60,8 @@ a { color: inherit; }
 }
 .field textarea { min-height: 76px; resize: vertical; }
 .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--black); box-shadow: 0 0 0 3px rgba(245, 205, 110, .55); }
+.check { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 14px; font-size: 14px; line-height: 1.7; color: var(--g500); cursor: pointer; }
+.check input { flex: none; width: 20px; height: 20px; margin: 3px 0 0; accent-color: var(--black); }
 .field-row { display: grid; grid-template-columns: 1fr; gap: 0; }
 @media (min-width: 640px) { .field-row { grid-template-columns: 1fr 1fr; gap: 10px; } }
 .field-row .field--sm { max-width: 140px; }

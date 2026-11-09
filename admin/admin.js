@@ -23,7 +23,9 @@
   /* ---------- Sign in ----------
      The panel opens only for the owner's phone number and password. Neither is stored anywhere: PBKDF2
      turns them into 64 bytes. The first half is checked against AUTH.check; the second half is an AES key
-     that seals the GitHub token on this device (localStorage), so the token is never kept in plain text.
+     that seals the GitHub token, so the token is never kept in plain text. The sealed token lives in two
+     places: on this device (localStorage), and in admin/vault.json in the repo, so a new device needs only
+     the phone and password. Only someone who knows both can open it.
      To change the password, compute a new salt and check with the same parameters (see README). */
   const AUTH = { salt: '3a7352ef3364fb3c66b7b4985a24b7ec', iter: 600000, check: '6e6761ec1a5cc0c7a71345e0ce2b63cc49d9d2ca95cf6923351b78d84f6a8eba' };
   const REPO = 'plaipa/Cafe13';
@@ -152,9 +154,42 @@
     try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {}
   }
 
-  async function unseal() {
-    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64bytes(store.iv) }, aesKey, b64bytes(store.ct));
+  async function unseal(blob = store) {
+    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64bytes(blob.iv) }, aesKey, b64bytes(blob.ct));
     return new TextDecoder().decode(pt);
+  }
+
+  // The sealed token shared by every device: admin/vault.json. Missing, unreadable or sealed with an old password = null.
+  async function vaultLoad() {
+    try {
+      const r = await fetch('vault.json', { cache: 'no-store' });
+      if (!r.ok) return null;
+      const v = await r.json();
+      if (!v || !v.iv || !v.ct) return null;
+      return { token: await unseal(v), repo: repoOk(v.repo) ? v.repo : REPO, branch: v.branch || 'main' };
+    } catch (e) { return null; }
+  }
+
+  // Saves the sealed token (already made by seal()) into the repo, so new devices need only the phone and password.
+  async function vaultSave() {
+    const path = 'contents/admin/vault.json';
+    const text = JSON.stringify({ repo: cfg.repo, branch: cfg.branch, iv: store.iv, ct: store.ct }, null, 1) + '\n';
+    let sha;
+    try { sha = (await gh(`${path}?ref=${encodeURIComponent(cfg.branch)}`)).sha; } catch (e) { if (e.status !== 404) throw e; }
+    await gh(path, { method: 'PUT', body: JSON.stringify({ message: 'Admin: sealed sign-in token', content: b64enc(new TextEncoder().encode(text)), branch: cfg.branch, ...(sha ? { sha } : {}) }) });
+  }
+  const VAULT_AT = KEY + '-vault';
+  const VAULT_MSG = 'از این پس روی هر دستگاه فقط با شماره و رمز وارد می‌شوید. (تا چند دقیقه دیگر فعال می‌شود)';
+  // This device has a working token but the repo has no usable copy (first time, or the password changed): save it.
+  // Pages serves files with a short cache, so a fresh save is not repeated within the hour.
+  async function ensureVault() {
+    try {
+      if (Date.now() - Number(localStorage.getItem(VAULT_AT) || 0) < 3600e3) return;
+      if (await vaultLoad()) return;
+      await vaultSave();
+      localStorage.setItem(VAULT_AT, String(Date.now()));
+      toast(VAULT_MSG);
+    } catch (e) {}
   }
 
   function enter() {
@@ -177,15 +212,22 @@
         return showLogin('شماره تلفن یا رمز عبور درست نیست.');
       }
       fails = 0; aesKey = key; f.password.value = '';
-      let token = '';
+      let token = '', from = null;
       if (store.ct) { try { token = await unseal(); } catch (err) {} }
       else if (store.token) token = store.token;   // saved in plain text by an older version of the panel
+      if (!token) { from = await vaultLoad(); if (from) token = from.token; }   // new device: the token comes from the repo
       if (!token) return showToken();
-      cfg = { token, repo: repoOk(store.repo) ? store.repo : REPO, branch: store.branch || 'main' };
+      cfg = from ? { token, repo: from.repo, branch: from.branch } : { token, repo: repoOk(store.repo) ? store.repo : REPO, branch: store.branch || 'main' };
       try { await loadRemote(); }
-      catch (err) { cfg = {}; return showToken(ghError(err) + ' یک توکن تازه وارد کنید.'); }
-      if (!store.ct) await seal(cfg);
+      catch (err) {
+        // The token kept on this device may be an old one; another device may have saved a newer one in the repo
+        const v = from ? null : await vaultLoad();
+        try { if (!v || v.token === token) throw err; cfg = { token: v.token, repo: v.repo, branch: v.branch }; await loadRemote(); from = v; }
+        catch (err2) { cfg = {}; return showToken(ghError(err) + ' یک توکن تازه وارد کنید.'); }
+      }
+      if (!store.ct || from) await seal(cfg);       // keep a sealed copy on this device too
       enter();
+      if (!from) ensureVault();
     } catch (err) {
       showLogin('ورود انجام نشد: ' + err.message);
     } finally {
@@ -208,6 +250,8 @@
       await seal(cfg);
       f.token.value = '';
       enter();
+      if (f.share.checked) vaultSave().then(() => { try { localStorage.setItem(VAULT_AT, String(Date.now())); } catch (e) {} toast(VAULT_MSG); })
+        .catch(err => toast('ذخیرهٔ توکن برای دستگاه‌های دیگر انجام نشد: ' + ghError(err), true));
     } catch (err) {
       cfg = {};
       showToken(ghError(err));
