@@ -1186,8 +1186,8 @@
                 "en": "Simple bun"
               },
               "desc": {
-                "fa": "بان (نان مخصوص برگر)، سس مخصوص بان، گوشت گوساله، کاهو باتاویا، گوجه‌فرنگی رست‌شده، خیارشور",
-                "en": "Bun, house sauce, beef patty, batavia lettuce, roasted tomato, pickles"
+                "fa": "",
+                "en": ""
               },
               "price": 810,
               "available": true,
@@ -1200,8 +1200,8 @@
                 "en": "Cheese bun"
               },
               "desc": {
-                "fa": "پنیر ورقه‌ای، بان (نان مخصوص برگر)، سس مخصوص بان، گوشت گوساله، کاهو باتاویا، گوجه‌فرنگی رست‌شده، خیارشور",
-                "en": "Cheese slice, bun, house sauce, beef patty, batavia lettuce, roasted tomato, pickles"
+                "fa": "پنیر ورقه‌ای",
+                "en": "Cheese slice"
               },
               "price": 835,
               "available": true,
@@ -1214,8 +1214,8 @@
                 "en": "Mushroom bun"
               },
               "desc": {
-                "fa": "قارچ، پنیر موتزارلا، ادویه مخصوص، بان (نان مخصوص برگر)، سس مخصوص بان، گوشت گوساله، کاهو باتاویا، گوجه‌فرنگی رست‌شده، خیارشور",
-                "en": "Mushroom, mozzarella, house spice, bun, house sauce, beef patty, batavia lettuce, roasted tomato, pickles"
+                "fa": "قارچ، پنیر موتزارلا، ادویه مخصوص",
+                "en": "Mushroom, mozzarella, house spice"
               },
               "price": 870,
               "available": true,
@@ -1228,8 +1228,8 @@
                 "en": "Fire bun"
               },
               "desc": {
-                "fa": "پپرونی، هالوپینو، بان (نان مخصوص برگر)، سس مخصوص بان، گوشت گوساله، کاهو باتاویا، گوجه‌فرنگی رست‌شده، خیارشور",
-                "en": "Pepperoni, jalapeño, bun, house sauce, beef patty, batavia lettuce, roasted tomato, pickles"
+                "fa": "پپرونی، هالوپینو",
+                "en": "Pepperoni, jalapeño"
               },
               "price": 840,
               "available": true,
@@ -1242,8 +1242,8 @@
                 "en": "Chorizo bun"
               },
               "desc": {
-                "fa": "چوریتزو، 2 عدد پنیر ورقه‌ای، بان (نان مخصوص برگر)، سس مخصوص بان، گوشت گوساله، کاهو باتاویا، گوجه‌فرنگی رست‌شده، خیارشور",
-                "en": "Chorizo, 2 cheese slices, bun, house sauce, beef patty, batavia lettuce, roasted tomato, pickles"
+                "fa": "چوریتزو، 2 عدد پنیر ورقه‌ای",
+                "en": "Chorizo, 2 cheese slices"
               },
               "price": 990,
               "available": true,
@@ -1256,8 +1256,8 @@
                 "en": "Peanut bun"
               },
               "desc": {
-                "fa": "سس ریحان کره بادام‌زمینی، پیاز کارامل، پنیر ورقه‌ای، بان (نان مخصوص برگر)، سس مخصوص بان، گوشت گوساله، کاهو باتاویا، گوجه‌فرنگی رست‌شده، خیارشور",
-                "en": "Peanut-basil sauce, caramelised onion, cheese slice, bun, house sauce, beef patty, batavia lettuce, roasted tomato, pickles"
+                "fa": "سس ریحان کره بادام‌زمینی، پیاز کارامل، پنیر ورقه‌ای",
+                "en": "Peanut-basil sauce, caramelised onion, cheese slice"
               },
               "price": 850,
               "available": true,
@@ -1270,8 +1270,8 @@
                 "en": "Crispy bacon bun"
               },
               "desc": {
-                "fa": "بیکن 97% ایرلندی، سیب‌زمینی کریسپی، پنیر ورقه‌ای، بان (نان مخصوص برگر)، سس مخصوص بان، گوشت گوساله، کاهو باتاویا، گوجه‌فرنگی رست‌شده، خیارشور",
-                "en": "97% Irish bacon, crispy potato, cheese slice, bun, house sauce, beef patty, batavia lettuce, roasted tomato, pickles"
+                "fa": "بیکن 97% ایرلندی، سیب‌زمینی کریسپی، پنیر ورقه‌ای",
+                "en": "97% Irish bacon, crispy potato, cheese slice"
               },
               "price": 950,
               "available": true,
@@ -1284,8 +1284,8 @@
                 "en": "Cheese steak bun"
               },
               "desc": {
-                "fa": "فیله گوساله مزه‌دار، پنیر موتزارلا، سس پنیر (اختیاری)، پنیر ورقه‌ای، بان (نان مخصوص برگر)، سس مخصوص بان، گوشت گوساله، کاهو باتاویا، گوجه‌فرنگی رست‌شده، خیارشور",
-                "en": "Marinated beef fillet, mozzarella, cheese sauce (optional), cheese slice, bun, house sauce, beef patty, batavia lettuce, roasted tomato, pickles"
+                "fa": "فیله گوساله مزه‌دار، پنیر موتزارلا، سس پنیر (اختیاری)، پنیر ورقه‌ای",
+                "en": "Marinated beef fillet, mozzarella, cheese sauce (optional), cheese slice"
               },
               "price": 1050,
               "available": true,
@@ -1298,8 +1298,8 @@
                 "en": "Chicken bun"
               },
               "desc": {
-                "fa": "مغز فیله مرغ مزه‌دار، پنیر ورقه‌ای، بان، سس مخصوص بان، کاهو باتاویا، گوجه‌فرنگی رست‌شده، خیارشور",
-                "en": "Marinated chicken fillet, cheese slice, bun, house sauce, batavia lettuce, roasted tomato, pickles"
+                "fa": "مغز فیله مرغ مزه‌دار به‌جای گوشت گوساله، پنیر ورقه‌ای",
+                "en": "Marinated chicken fillet instead of beef, cheese slice"
               },
               "price": 630,
               "available": true,
@@ -1312,8 +1312,8 @@
                 "en": "Sujuk bun"
               },
               "desc": {
-                "fa": "سوجوق، پنیر ورقه‌ای، بان (نان مخصوص برگر)، سس مخصوص بان، گوشت گوساله، کاهو باتاویا، گوجه‌فرنگی رست‌شده، خیارشور",
-                "en": "Sujuk, cheese slice, bun, house sauce, beef patty, batavia lettuce, roasted tomato, pickles"
+                "fa": "سوجوق، پنیر ورقه‌ای",
+                "en": "Sujuk, cheese slice"
               },
               "price": 865,
               "available": true,
@@ -1321,8 +1321,8 @@
             }
           ],
           "note": {
-            "fa": "تمام برگرها و تست‌ها با سیب‌زمینی سرخ‌کرده سرو می‌شوند",
-            "en": "All burgers and toasts come with fries"
+            "fa": "همه برگرها: بان مخصوص، سس مخصوص بان، گوشت گوساله، کاهو باتاویا، گوجه‌فرنگی رست‌شده و خیارشور. تمام برگرها و تست‌ها با سیب‌زمینی سرخ‌کرده سرو می‌شوند.",
+            "en": "Every burger comes with the house bun, house sauce, beef patty, batavia lettuce, roasted tomato and pickles. All burgers and toasts are served with fries."
           }
         },
         {
@@ -1639,12 +1639,12 @@
             {
               "id": "fries-fries-mushroom-and-cheddar-sauce",
               "name": {
-                "fa": "سیب‌زمینی با سس قارچ و چدار",
-                "en": "Fries, mushroom and cheddar sauce"
+                "fa": "سیب‌زمینی با سس",
+                "en": "Fries with sauce"
               },
               "desc": {
-                "fa": "قارچ و خامه",
-                "en": "Mushroom and cream"
+                "fa": "سس: قارچ و چدار یا قارچ و خامه",
+                "en": "Sauce: mushroom and cheddar, or mushroom and cream"
               },
               "price": 530,
               "available": true,
