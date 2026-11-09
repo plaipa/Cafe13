@@ -408,6 +408,27 @@ html.js:not(.no-motion) .foot__mark path { fill: transparent; stroke-dasharray: 
 .sheet__body p { color: var(--g200); font-size: 15px; line-height: 1.8; }
 .sheet__body .price { font-size: 22px; font-weight: 800; color: var(--yellow); }
 
+/* ---------- Order by phone: floating pill, bottom centre on phones, bottom corner on wide screens ---------- */
+.call {
+  position: fixed; z-index: 40; inset-inline: 0; bottom: calc(14px + var(--safe-b)); width: max-content; margin-inline: auto;
+  display: flex; align-items: center; gap: 12px; height: 56px; padding-inline: 9px 24px; border-radius: 28px;
+  background: var(--red); color: var(--paper); font-size: 16px; font-weight: 800; line-height: 1; white-space: nowrap;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .45), 0 2px 6px rgba(0, 0, 0, .25);
+  transform: translateY(calc(100% + 30px + var(--safe-b))); transition: transform .7s var(--ease), background-color .35s var(--ease), color .35s var(--ease);
+}
+.call[hidden] { display: none; }
+html:not(.is-loading) .call.is-shown { transform: none; }
+html:not(.is-loading) .call.is-shown:active { transform: scale(.96); }
+.call__ring { position: relative; flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--black); color: var(--yellow); }
+.call__ring svg { width: 19px; height: 19px; fill: currentColor; }
+[dir="rtl"] .call__ring svg { transform: scaleX(-1); }
+.call__ring::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--paper); animation: call-ping 2.6s cubic-bezier(.2, .6, .3, 1) infinite; }
+@keyframes call-ping { 0% { transform: scale(1); opacity: .8; } 70%, 100% { transform: scale(1.7); opacity: 0; } }
+.call__num { display: none; font-weight: 600; color: rgba(247, 247, 245, .8); }
+html.has-call .foot { padding-bottom: calc(96px + var(--safe-b)); }
+@media (hover: hover) { .call:hover { background: var(--black); color: var(--yellow); } .call:hover .call__ring { background: var(--red); color: var(--paper); } .call:hover .call__num { color: var(--g400); } }
+@media (prefers-reduced-motion: reduce) { .call__ring::after { animation: none; opacity: 0; } }
+
 /* ---------- Wider screens ---------- */
 @media (min-width: 700px) {
   :root { --pad: 40px; }
@@ -420,6 +441,9 @@ html.js:not(.no-motion) .foot__mark path { fill: transparent; stroke-dasharray: 
   .visit__cell { flex-direction: column; justify-content: flex-start; padding-inline-end: 16px; }
   .visit__val { text-align: start; }
   .btn { width: auto; display: inline-flex; padding-inline: 40px; }
+  .call { inset-inline: auto 32px; margin: 0; bottom: calc(28px + var(--safe-b)); }
+  [dir="ltr"] .call { inset-inline: auto 32px; }
+  .call__num { display: inline; }
   .sheet__panel { inset-inline: 50% auto; width: 520px; bottom: 50%; transform: translate(50%, 50%); border-radius: 22px; }
   [dir="ltr"] .sheet__panel { transform: translate(-50%, 50%); }
 }

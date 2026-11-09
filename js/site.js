@@ -17,12 +17,12 @@
 
   const T = {
     fa: { mapLabel: 'نقشهٔ محل کافه 13', directions: 'مسیریابی', lead: 'قهوه، برگر و صبحانه', visitTitle: 'سر بزنید', addressLabel: 'آدرس', hoursLabel: 'ساعت کاری',
-          phoneLabel: 'تلفن', igCta: 'اینستاگرام ما', priceNote: 'قیمت‌ها به هزار تومان', items: 'آیتم', out: 'تمام شد',
+          phoneLabel: 'تلفن', callCta: 'سفارش تلفنی', igCta: 'اینستاگرام ما', priceNote: 'قیمت‌ها به هزار تومان', items: 'آیتم', out: 'تمام شد',
           error: 'منو بارگذاری نشد. صفحه را دوباره باز کنید.', title: 'کافه 13 تبریز | قهوه، برگر و صبحانه',
           menuDocTitle: 'منوی کافه 13 تبریز | قهوه، برگر و صبحانه', navMenu: 'منو', navHome: 'درباره کافه', menuTitle: 'منو', footLink: 'آدرس و نقشه',
           storyNow: 'تا امروز', statYears: 'سال پشت پیشخوان', statItems: 'آیتم در منو', storyCta: 'منو را ببینید' },
     en: { mapLabel: 'Map showing where Cafe 13 is', directions: 'Get directions', lead: 'Coffee, burgers and breakfast', visitTitle: 'Visit us', addressLabel: 'Address', hoursLabel: 'Hours',
-          phoneLabel: 'Phone', igCta: 'Follow us', priceNote: 'Prices in thousand toman', items: 'items', out: 'Sold out',
+          phoneLabel: 'Phone', callCta: 'Order by phone', igCta: 'Follow us', priceNote: 'Prices in thousand toman', items: 'items', out: 'Sold out',
           error: 'The menu did not load. Please reload the page.', title: 'Cafe 13 Tabriz | Coffee, burgers and breakfast',
           menuDocTitle: 'Menu | Cafe 13 Tabriz', navMenu: 'Menu', navHome: 'About', menuTitle: 'Menu', footLink: 'Address & map',
           storyNow: 'to today', statYears: 'years behind the counter', statItems: 'items on the menu', storyCta: 'See the menu' }
@@ -96,9 +96,27 @@
     const ig = 'https://www.instagram.com/' + encodeURIComponent((S.instagram || 'caffe.13').replace(/^@/, ''));
     $$('[data-ig]').forEach(a => a.href = ig);
     $$('.btn .ltr').forEach(s => s.textContent = '@' + (S.instagram || 'caffe.13').replace(/^@/, ''));
-    if (S.phone && $('.visit__cell--phone')) {
-      const cell = $('.visit__cell--phone'); cell.hidden = false;
-      const a = $('[data-phone]'); a.textContent = S.phone; a.href = 'tel:' + S.phone.replace(/[^\d+]/g, '');
+    // Phone: one number from the settings (admin panel) drives the visit row and the floating "order by phone" button.
+    // Empty = neither shows. Dialled in international form so it also works from a foreign SIM.
+    const phone = latin(S.phone || '').replace(/[^\d+]/g, '');
+    if (phone) {
+      const tel = 'tel:' + (/^0\d{10}$/.test(phone) ? '+98' + phone.slice(1) : phone);
+      const shown = /^0\d{10}$/.test(phone) ? phone.replace(/^(\d{4})(\d{3})(\d{4})$/, '$1 $2 $3') : phone;
+      if ($('.visit__cell--phone')) {
+        $('.visit__cell--phone').hidden = false;
+        const a = $('[data-phone]'); a.textContent = shown; a.href = tel; a.dir = 'ltr'; a.classList.add('ltr');
+      }
+      const call = $('[data-call]');
+      if (call) {
+        call.href = tel; call.hidden = false; call.setAttribute('aria-label', `${T.callCta} ${shown}`);
+        $('[data-call-num]', call).textContent = shown;
+        root.classList.add('has-call');
+        // Menu: always at hand. Home: waits until the film and the cafe's name have scrolled away.
+        const hero = $('.hero');
+        const show = on => call.classList.toggle('is-shown', on);
+        if (hero && 'IntersectionObserver' in window) new IntersectionObserver(es => show(!es[0].isIntersecting), { rootMargin: '0px 0px -35% 0px' }).observe(hero);
+        else requestAnimationFrame(() => requestAnimationFrame(() => show(true)));
+      }
     }
     // Map: labels in the current language, directions link only when one is set
     if ($('.map__svg')) {
